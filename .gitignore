@@ -1,4 +1,5 @@
 .history/
+*.lnk
+dist-electron/
 node_modules/
 out/
-dist-electron/
