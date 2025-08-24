@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Main + renderer",
+      "preLaunchTask": "pnpm dev with debug",
+      "configurations": [
+        "Debug Main Process",
+        "Debug Renderer Process"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "",
+        "order": 1
+      },
+      "stopAll": true
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Debug Renderer Process",
+      "port": 9222,
+      "request": "attach",
+      "type": "chrome",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceRoot}/node_modules/**",
+        "${workspaceRoot}/dist-electron/**",
+      ]
+    },
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "args": [
+        ".",
+        "--remote-debugging-port=9222",
+        "--trace-warnings"
+      ],
+      "outputCapture": "std",
+      "envFile": "${workspaceFolder}/.vscode/.debug.env",
+      "console": "internalConsole"
+    },
+  ]
+}

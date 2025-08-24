@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "pnpm dev with debug",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "dev"
+      ],
+      "isBackground": true,
+      "options": {
+        "env": {
+          "VSCODE_DEBUG": "true"
+        }
+      },
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": "^([^\\\\s].*)\\\\((\\\\d+,\\\\d+)\\\\):\\\\s*(.*)$",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*VITE v.*  ready in \\d* ms.*$",
+          "endsPattern": "^.*\\[startup\\] Electron App.*$"
+        }
+      }
+    }
+  ]
+}
