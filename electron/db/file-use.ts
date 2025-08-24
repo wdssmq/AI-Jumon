@@ -10,6 +10,6 @@ export const saveCount = async (count: number, app: Electron.App) => {
 export const getCount = async (app: Electron.App) => {
   const usrDir = app.getPath("userData");
   const db = new FileDB(path.join(usrDir, "count.txt"));
-  const count = await db.read();
+  const count = await db.read('0');
   return parseInt(count, 10);
 };
