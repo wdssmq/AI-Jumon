@@ -38,8 +38,11 @@ function createWindow() {
   // 隐藏菜单
   win.setMenu(null)
 
+  // 最大化窗口
+  win.maximize();
+
   // 打开开发者工具
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
