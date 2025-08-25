@@ -5,6 +5,7 @@ interface Item {
 
 interface Prompt {
   name: string;
+  desc?: string;
   content: string;
   items?: Item[];
   [key: string]: any;
@@ -21,13 +22,13 @@ export class IndexParser {
   private prompts: Record<string, string> = {};
   private cachedValues: Record<string, string> = {};
 
-  constructor(jsonData: string) {
+  constructor(jsonData: string | Config[]) {
     this.loadConfig(jsonData);
   }
 
-  private loadConfig(jsonData: string): void {
+  private loadConfig(jsonData: string | Config[]): void {
     try {
-      const config: Config[] = JSON.parse(jsonData);
+      const config: Config[] = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
 
       config.forEach((section) => {
         if (section.items) {
@@ -49,7 +50,7 @@ export class IndexParser {
             }
 
             Object.keys(prompt).forEach((key) => {
-              if (key !== 'name' && key !== 'content' && key !== 'items') {
+              if (key !== 'name' && key !== 'content' && key !== 'items' && key !== 'desc') {
                 this.subItems[promptName] = this.subItems[promptName] || {};
                 this.subItems[promptName][key] = prompt[key].trim();
               }
@@ -126,4 +127,10 @@ export class IndexParser {
   public listItems(): string[] {
     return Object.keys(this.items);
   }
+}
+
+export type {
+  Config,
+  Item,
+  Prompt,
 }
