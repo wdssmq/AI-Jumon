@@ -3,10 +3,12 @@ import path from 'node:path'
 import electron from 'vite-plugin-electron/simple'
 import vue from '@vitejs/plugin-vue'
 import pkg from './package.json'
+import UnoCSS from 'unocss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    UnoCSS(),
     vue(),
     electron({
       main: {
