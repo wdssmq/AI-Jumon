@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HelloWorld from '@/components/HelloWorld.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 function goIndex() {
@@ -7,5 +8,6 @@ function goIndex() {
 </script>
 <template>
   <h2>AboutView</h2>
+  <HelloWorld msg="Vite + Vue" />
   <button @click="goIndex">Go to Index</button>
 </template>
