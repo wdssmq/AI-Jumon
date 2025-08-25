@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { saveCount, getCount } from "./db/file-use";
+import { saveCount, getCount, ensureStorageExists } from "./db/file-use";
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -40,10 +40,19 @@ function createWindow() {
 
   // 打开开发者工具
   win.webContents.openDevTools()
-  
+
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
+    // 调试输出用户数据目录
     console.log('userData:', app.getPath("userData"));
+
+    // 判断并创建 Storage 目录
+    ensureStorageExists(app).then(() => {
+      console.log('User config ensured.');
+    }).catch(err => {
+      console.error('Error ensuring user config:', err);
+    });
+
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
     // getCount(app).then(count => {
     //   win?.webContents.send('click-count', count)
