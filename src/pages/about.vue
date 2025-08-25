@@ -9,5 +9,5 @@ function goIndex() {
 <template>
   <h2>AboutView</h2>
   <HelloWorld msg="Vite + Vue" />
-  <button @click="goIndex">Go to Index</button>
+  <button class="btn-rt" @click="goIndex">Go to Index</button>
 </template>
