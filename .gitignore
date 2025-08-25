@@ -1,5 +1,7 @@
 .history/
 *.lnk
 dist-electron/
+dist/
 node_modules/
 out/
+release/
