@@ -64,7 +64,7 @@ function createWindow() {
     console.log('click-count:', count);
     saveCount(count, app);
   });
-  // 监听来自渲染进程的 get-click-count 消息
+  // 监听来自渲染进程的 get-click-count 消消息
   ipcMain.handle('get-click-count', async () => {
     const count = await getCount(app);
     return count;

@@ -53,7 +53,7 @@ export async function getYmlData(app: Electron.App): Promise<string> {
 
   const usrDir = app.getPath("userData");
   const storageDir = path.join(usrDir, 'ai-data');
-  const db = new FileDB(path.join(storageDir, "config.yml"));
+  const db = new FileDB(path.join(storageDir, "config.yaml"));
   const ymlStr = await db.read(defConfig());
   return parseYAML(ymlStr);
 }
