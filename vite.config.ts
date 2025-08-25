@@ -47,4 +47,9 @@ export default defineConfig({
         }
       })()
     : undefined,
+  resolve: {
+    alias: {
+      '@': path.join(__dirname, 'src'),
+    },
+  },
 })
