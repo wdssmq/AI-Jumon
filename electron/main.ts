@@ -67,10 +67,17 @@ function createWindow() {
     console.log('click-count:', count);
     saveCount(count, app);
   });
+
   // 监听来自渲染进程的 get-click-count 消消息
   ipcMain.handle('get-click-count', async () => {
     const count = await getCount(app);
     return count;
+  });
+
+  // 监听来自渲染进程的 get-prompts 消息
+  ipcMain.handle('get-prompts', async () => {
+    const ymlData = await getYmlData(app);
+    return ymlData;
   });
 
   if (VITE_DEV_SERVER_URL) {
