@@ -128,7 +128,7 @@ export class IndexParser {
     Object.keys(this.items).forEach((key) => {
       this.cachedValues[`$${key}`] = this.generateText(this.items[key]);
     });
-    console.log('Cached Values:', this.cachedValues);
+    // console.log('Cached Values:', this.cachedValues);
   }
 
   public generatePrompt(promptName: string): string {

@@ -4,6 +4,7 @@ import {
   fileExists,
   createDir,
   parseYAML,
+  dumpYAML,
   getLocalTime,
 } from "../utils/base";
 import path from 'node:path'
@@ -81,4 +82,10 @@ export async function getYmlData(objScope: Record<string, any> = {}): Promise<st
   const db = new FileDB(path.join(storageDir, "config.yaml"));
   const ymlStr = await db.read(defConfig());
   return parseYAML(ymlStr);
+}
+
+export async function saveYmlData(ymlData:any, objScope: Record<string, any> = {}): Promise<void> {
+  const storageDir = objScope.StoragePath;
+  const db = new FileDB(path.join(storageDir, "config.yaml"));
+  await db.write(dumpYAML(ymlData));
 }

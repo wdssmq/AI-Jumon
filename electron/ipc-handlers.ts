@@ -1,6 +1,13 @@
 import path from 'node:path';
 import { app, ipcMain } from 'electron';
-import { saveCount, getCount, getYmlData, ensureStorageExists, autoBackup } from './db/file-use';
+import {
+  saveCount,
+  getCount,
+  getYmlData,
+  saveYmlData,
+  ensureStorageExists,
+  autoBackup,
+} from './db/file-use';
 
 export function setupIpcHandlers(win: Electron.BrowserWindow) {
 
@@ -45,5 +52,16 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
   ipcMain.handle('get-prompts', async () => {
     const ymlData = await getYmlData(objScope);
     return ymlData;
+  });
+
+  // 监听来自渲染进程的 save-prompts 消息
+  ipcMain.handle('save-prompts', async (_, ymlData) => {
+    try {
+      await saveYmlData(ymlData, objScope);
+      return { success: true };
+    } catch (error) {
+      console.error('Error saving prompts:', error);
+      return { success: false, error: (error instanceof Error ? error.message : 'Unknown error') };
+    }
   });
 }

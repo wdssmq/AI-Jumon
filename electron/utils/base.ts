@@ -29,6 +29,10 @@ export const parseYAML = (yaml: string): any => {
   return yaml ? _yaml.load(yaml) : {};
 }
 
+export const dumpYAML = (data: any): string => {
+  return _yaml.dump(data);
+}
+
 export const getLocalTime = (date: Date = new Date()): Record<string, number> => {
   const obj =  {
     year: date.getFullYear(),
