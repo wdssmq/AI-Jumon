@@ -33,11 +33,11 @@ export async function getYmlData(objScope:Record<string, any> = {}): Promise<str
 
   - name: 动物类型
     content: |
-      {{rnd(猫,兔子,)}}
+      {{rnd(猫,兔子,-1)}}
 
   - name: 动物
     content: |
-      {{if($动物类型):桌子上有{{$动物类型}}:}}
+      {{if($动物类型 ? 桌子上有{{$动物类型}} : _null)}}
 
   - name: 头发
     content: |
