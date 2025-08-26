@@ -55,25 +55,40 @@ function generatePrompt(rnd:boolean = false) {
 
 <template>
   <div>
-    <h2>变量列表</h2>
-    <ul v-if="IndexConfig && IndexConfig.items">
-      <li v-for="(item, index) in IndexConfig.items" :key="index" class="grid grid-cols-[10%_auto] gap-4">
-        <strong>{{ item.name }}</strong>
-        <span>{{ item.content }}</span>
-      </li>
-    </ul>
-<button @click="generatePrompt(false)">重新生成</button>
-<button @click="generatePrompt(true)">随机重新生成</button>
-    <h3>提示词列表</h3>
-    <ul v-if="IndexConfig && IndexConfig.prompts">
-      <li v-for="(prompt, index) in IndexConfig.prompts" :key="index"
-        class="grid grid-rows-2 grid-cols-[10%_auto] gap-4 pb-4 b-b-10 border-gray-300 mb-4">
-        <span>{{ prompt.desc }}</span>
-        <textarea :name="prompt.name" :id="prompt.name" rows="3" spellcheck="false" class="p-1.3">{{ prompt.result }}</textarea>
-        <strong>{{ prompt.name }}</strong>
-        <span>{{ prompt.content }}</span>
-      </li>
-    </ul>
+    <details open class="mb-4">
+      <summary class="cursor-pointer text-lg font-bold mb-2">变量列表</summary>
+      <ul v-if="IndexConfig && IndexConfig.items">
+        <li v-for="(item, index) in IndexConfig.items" :key="index" class="grid grid-cols-[20%_auto] gap-4 py-1 border-b">
+          <strong class="text-blue-700">{{ item.name }}</strong>
+          <span class="text-gray-700">{{ item.content }}</span>
+        </li>
+      </ul>
+    </details>
+    <div class="flex gap-2 mb-4 pl-8">
+      <button @click="generatePrompt(false)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">重新生成</button>
+      <button @click="generatePrompt(true)" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">随机重新生成</button>
+    </div>
+    <details open>
+      <summary class="cursor-pointer text-lg font-bold mb-2">提示词列表</summary>
+      <ul v-if="IndexConfig && IndexConfig.prompts">
+        <li v-for="(prompt, index) in IndexConfig.prompts" :key="index"
+          class="grid grid-cols-1 gap-2 p-3 border rounded mb-4 bg-gray-50 shadow-sm">
+          <div class="flex items-center gap-2 mb-1">
+            <strong class="text-purple-700">{{ prompt.name }}</strong>
+            <span class="text-gray-500 text-sm">{{ prompt.desc }}</span>
+          </div>
+          <textarea
+            :name="prompt.name"
+            :id="prompt.name"
+            rows="3"
+            spellcheck="false"
+            class="w-full p-2 border rounded bg-white font-mono text-sm resize-none"
+            readonly
+          >{{ prompt.result }}</textarea>
+          <div class="text-gray-600 text-xs mt-1">原始内容：{{ prompt.content }}</div>
+        </li>
+      </ul>
+    </details>
   </div>
 </template>
 
