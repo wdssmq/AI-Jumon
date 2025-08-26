@@ -108,7 +108,7 @@ export class IndexParser {
 
   private preGenerateAndCacheVariables(): void {
     Object.keys(this.items).forEach((key) => {
-      this.cachedValues[key] = this.generateText(this.items[key]);
+      this.cachedValues[`$${key}`] = this.generateText(this.items[key]);
     });
   }
 
