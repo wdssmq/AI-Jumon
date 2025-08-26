@@ -1,8 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { saveCount, getCount, getYmlData ,ensureStorageExists } from "./db/file-use";
+import { setupIpcHandlers } from './ipc-handlers';
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -44,47 +44,13 @@ function createWindow() {
   // 打开开发者工具
   // win.webContents.openDevTools()
 
-  // Test active push message to Renderer-process.
-  win.webContents.on('did-finish-load', () => {
-    // 调试输出用户数据目录
-    console.log('userData:', app.getPath("userData"));
-
-    // 判断并创建 Storage 目录
-    ensureStorageExists(app).then(() => {
-      console.log('User config ensured.');
-    }).catch(err => {
-      console.error('Error ensuring user config:', err);
-    });
-
-    win?.webContents.send('main-process-message', (new Date).toLocaleString())
-    // getCount(app).then(count => {
-    //   win?.webContents.send('click-count', count)
-    // })
-  })
-
-  // 监听来自渲染进程的 click-count 消息
-  ipcMain.on('click-count', (_, count) => {
-    console.log('click-count:', count);
-    saveCount(count, app);
-  });
-
-  // 监听来自渲染进程的 get-click-count 消消息
-  ipcMain.handle('get-click-count', async () => {
-    const count = await getCount(app);
-    return count;
-  });
-
-  // 监听来自渲染进程的 get-prompts 消息
-  ipcMain.handle('get-prompts', async () => {
-    const ymlData = await getYmlData(app);
-    return ymlData;
-  });
+  // 设置 IPC 处理程序
+  setupIpcHandlers(win);
 
   if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL)
+    win.loadURL(VITE_DEV_SERVER_URL);
   } else {
-    // win.loadFile('dist/index.html')
-    win.loadFile(path.join(RENDERER_DIST, 'index.html'))
+    win.loadFile(path.join(RENDERER_DIST, 'index.html'));
   }
 }
 
