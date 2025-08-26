@@ -1,12 +1,13 @@
 import path from 'node:path';
 import { app, ipcMain } from 'electron';
-import { saveCount, getCount, getYmlData, ensureStorageExists } from './db/file-use';
+import { saveCount, getCount, getYmlData, ensureStorageExists, autoBackup } from './db/file-use';
 
 export function setupIpcHandlers(win: Electron.BrowserWindow) {
 
   const objScope: Record<string, any> = {};
 
   win.webContents.on('did-finish-load', () => {
+
     // 调试输出用户数据目录
     console.log('userData:', app.getPath("userData"));
     objScope.StoragePath = path.join(app.getPath("userData"), 'ai-data');
@@ -16,6 +17,13 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
       console.log('User config ensured.');
     }).catch(err => {
       console.error('Error ensuring user config:', err);
+    });
+
+    // 自动备份
+    autoBackup(objScope).then((msg) => {
+      console.log(msg);
+    }).catch(err => {
+      console.error('Error during auto backup:', err);
     });
 
     win?.webContents.send('main-process-message', (new Date).toLocaleString());
