@@ -106,6 +106,12 @@ export class IndexParser {
     return text;
   }
 
+  private preGenerateAndCacheVariables(): void {
+    Object.keys(this.items).forEach((key) => {
+      this.cachedValues[key] = this.generateText(this.items[key]);
+    });
+  }
+
   public generatePrompt(promptName: string): string {
     if (!this.prompts[promptName]) {
       throw new Error(`Prompt '${promptName}' not found.`);
@@ -116,6 +122,8 @@ export class IndexParser {
         this.items[key] = value;
       });
     }
+    
+    this.preGenerateAndCacheVariables();
 
     return this.generateText(this.prompts[promptName]);
   }
