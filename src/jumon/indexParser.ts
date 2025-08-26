@@ -77,9 +77,11 @@ export class IndexParser {
     const ifPattern = /\{\{if\(([^?]+)\?([^:]+):([^)]+)\)\}\}/g;
     return text.replace(ifPattern, (_, condition: string, truePart: string, falsePart: string) => {
       const condVar = condition.trim();
-      let condValue = this.cachedValues[condVar] || this.items[condVar] || '';
-      condValue = condValue.trim() && condValue !== '-1' && condValue !== '0' ? 'true' : '';
-      return condValue ? truePart.trim() : falsePart.trim();
+      const condValue = this.cachedValues[condVar] || '';
+      const bolCondValue = condValue !== '-1' && condValue !== '0' ? true : false;
+
+      // console.log('>>', condVar, condValue, bolCondValue, truePart, falsePart);
+      return bolCondValue ? truePart.trim() : falsePart.trim();
     });
   }
 
@@ -88,8 +90,7 @@ export class IndexParser {
 
     return text.replace(varPattern, (_, varName) => {
       if (varName.startsWith('$')) {
-        const cacheVarName = varName.slice(1);
-        return this.cachedValues[cacheVarName] || this.items[cacheVarName] || '';
+        return this.cachedValues[varName] || '';
       }
 
       if (this.items[varName]) {
@@ -127,6 +128,7 @@ export class IndexParser {
     Object.keys(this.items).forEach((key) => {
       this.cachedValues[`$${key}`] = this.generateText(this.items[key]);
     });
+    console.log('Cached Values:', this.cachedValues);
   }
 
   public generatePrompt(promptName: string): string {

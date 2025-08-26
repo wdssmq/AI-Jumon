@@ -43,6 +43,7 @@ function generatePrompt(rnd:boolean = false) {
   }
   obj.prompts?.forEach((prompt) => {
     const generated = IndexProject.generatePrompt(prompt.name);
+
     console.log('Generated Prompt:', generated);
 
     prompt.result = generated;
