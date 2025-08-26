@@ -2,29 +2,28 @@ import FileDB from "./file";
 import { dirExists, createDir, parseYAML } from "../utils/base";
 import path from 'node:path'
 
-export const saveCount = async (count: number, app: Electron.App) => {
-  const usrDir = app.getPath("userData");
-  const db = new FileDB(path.join(usrDir, "count.txt"));
+export const saveCount = async (count: number, objScope:Record<string, any> = {}) => {
+  const storageDir = objScope.StoragePath;
+  const db = new FileDB(path.join(storageDir, "count.txt"));
   await db.write(count.toString());
 };
 
-export const getCount = async (app: Electron.App) => {
-  const usrDir = app.getPath("userData");
-  const db = new FileDB(path.join(usrDir, "count.txt"));
+export const getCount = async (objScope:Record<string, any> = {}) => {
+  const storageDir = objScope.StoragePath;
+  const db = new FileDB(path.join(storageDir, "count.txt"));
   const count = await db.read('0');
   return parseInt(count, 10);
 };
 
-export async function ensureStorageExists(app: Electron.App): Promise<void> {
-  const usrDir = app.getPath("userData");
-  const storageDir = path.join(usrDir, 'ai-data');
+export async function ensureStorageExists(objScope:Record<string, any> = {}): Promise<void> {
+  const storageDir = objScope.StoragePath;
   if (await dirExists(storageDir)) {
     return;
   }
   await createDir(storageDir);
 }
 
-export async function getYmlData(app: Electron.App): Promise<string> {
+export async function getYmlData(objScope:Record<string, any> = {}): Promise<string> {
 
   function defConfig(): string {
     return `- items:
@@ -51,8 +50,7 @@ export async function getYmlData(app: Electron.App): Promise<string> {
       `;
   }
 
-  const usrDir = app.getPath("userData");
-  const storageDir = path.join(usrDir, 'ai-data');
+  const storageDir = objScope.StoragePath;
   const db = new FileDB(path.join(storageDir, "config.yaml"));
   const ymlStr = await db.read(defConfig());
   return parseYAML(ymlStr);
