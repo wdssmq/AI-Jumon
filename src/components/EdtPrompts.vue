@@ -53,8 +53,8 @@ const otherAttributes = computed(() => {
           </div>
       </div>
       <div class="flex justify-end gap-2 mt-4">
-        <button @click="close" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">取消</button>
-        <button @click="save" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">保存</button>
+        <button @click="close" class="btn-def bg-gray-500 hover:bg-gray-600">取消</button>
+        <button @click="save" class="btn-def bg-blue-500 hover:bg-blue-600">保存</button>
       </div>
     </div>
   </div>

@@ -96,9 +96,10 @@ function openEditor(prompt: any) {
     </details>
     <div class="flex gap-2 mb-4 pl-8">
       <button @click="generatePrompt(false)"
-        class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">重新生成</button>
+        class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button>
       <button @click="generatePrompt(true)"
-        class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">随机重新生成</button>
+        class="btn-def bg-green-500 hover:bg-green-600">随机重新生成</button>
+
     </div>
     <details open>
       <summary class="cursor-pointer text-lg font-bold mb-2">提示词列表</summary>
@@ -109,7 +110,7 @@ function openEditor(prompt: any) {
             <strong class="text-purple-700">{{ prompt.name }}</strong>
             <span class="text-gray-500 text-sm">{{ prompt.desc }}</span>
             <button @click="openEditor(prompt)"
-              class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">编辑</button>
+              class="btn-def bg-yellow-500 hover:bg-yellow-600 ml-auto">编辑</button>
           </div>
           <textarea :name="prompt.name" :id="prompt.name" rows="3" spellcheck="false"
             class="w-full p-2 border rounded bg-white font-mono text-sm resize-none"
