@@ -72,6 +72,17 @@ export class IndexParser {
     });
   }
 
+  private processConditional(text: string): string {
+    // {{if($窗户 ? 窗外有蓝天白云 : _null)}}
+    const ifPattern = /\{\{if\(([^?]+)\?([^:]+):([^)]+)\)\}\}/g;
+    return text.replace(ifPattern, (_, condition: string, truePart: string, falsePart: string) => {
+      const condVar = condition.trim();
+      let condValue = this.cachedValues[condVar] || this.items[condVar] || '';
+      condValue = condValue.trim() && condValue !== '-1' && condValue !== '0' ? 'true' : '';
+      return condValue ? truePart.trim() : falsePart.trim();
+    });
+  }
+
   private processVariables(text: string): string {
     const varPattern = /\{\{([^}]+)\}\}/g;
 
@@ -97,10 +108,16 @@ export class IndexParser {
     }
 
     let text = this.processRandomSelection(template);
+    text = this.processConditional(text);
 
     if (/\{\{[^}]+\}\}/.test(text)) {
       text = this.processVariables(text);
       text = this.generateText(text, maxDepth - 1);
+    } else {
+      text = text.replace(/_null/g, ' ');
+      text = text.replace(/[，。]/g, ',');
+      text = text.replace(/,[,\s]+/g, ', ');
+      text = text.replace(/^[\s,]+/g, '').replace(/[\s,]+$/g, '');
     }
 
     return text;
@@ -122,7 +139,7 @@ export class IndexParser {
         this.items[key] = value;
       });
     }
-    
+
     this.preGenerateAndCacheVariables();
 
     return this.generateText(this.prompts[promptName]);
