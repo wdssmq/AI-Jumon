@@ -109,13 +109,15 @@ const EditButton = defineComponent({
       <div v-if="otherAttributes.length" class="mt-4">
         <div v-for="[key, value] in otherAttributes" :key="key" class="mb-1 flex items-center gap-2">
           <strong>{{ key }}:</strong>
-          <textarea v-if="attributesEditState[key]" v-model="prompt[key]" class="p-2 border rounded font-mono w-prose"
+          <textarea v-if="attributesEditState[key]" v-model="prompt[key]" class="p-2 border rounded font-mono w-137"
             :name="key"></textarea>
-          <span v-else class="w-prose whitespace-nowrap overflow-clip text-ellipsis">
+          <span v-else class="whitespace-nowrap overflow-clip text-ellipsis"
+            :class="prompt[key] === '' ? 'w-50' : 'w-137'">
             {{ value }}
           </span>
           <EditButton :isEditing="attributesEditState[key]"
             :onToggle="() => (attributesEditState[key] = !attributesEditState[key])" />
+          <!-- >>循环结束 -->
         </div>
       </div>
       <div class="flex justify-end gap-2 mt-4">
