@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import '@unocss/reset/normalize.css'
 import './style.css'
 import 'virtual:uno.css'
 import router from './router'
