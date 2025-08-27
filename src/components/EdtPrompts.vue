@@ -39,16 +39,22 @@ const otherAttributes = computed(() => {
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded shadow-lg w-1/2">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click="close">
+    <div class="bg-white p-6 rounded shadow-lg w-1/2" @click.stop>
       <h2 class="text-lg font-bold mb-4">编辑提示词</h2>
-      <div class="mb-2"><strong>名称:</strong> {{ prompt.name }}</div>
-      <div class="mb-4"><strong>描述:</strong> {{ prompt.desc }}</div>
+      <div class="mb-2 flex items-center gap-2">
+        <strong>名称:</strong>
+         {{ prompt.name }}
+      </div>
+      <div class="mb-4 flex items-center gap-2">
+        <strong>描述:</strong>
+        {{ prompt.desc }}
+      </div>
       <textarea v-model="editedContent" rows="10"
         class="w-full p-2 border rounded font-mono text-sm resize-none"></textarea>
       <!-- 动态列出其他属性 -->
       <div v-if="otherAttributes.length" class="mt-4">
-          <div v-for="[key, value] in otherAttributes" :key="key" class="mb-1">
+          <div v-for="[key, value] in otherAttributes" :key="key" class="mb-1 flex items-center gap-2">
             <strong>{{ key }}:</strong> {{ value }}
           </div>
       </div>
