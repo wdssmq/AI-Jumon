@@ -110,6 +110,7 @@ const EditButton = defineComponent({
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click="close">
     <div class="bg-white p-6 rounded shadow-lg w-1/2" @click.stop>
       <h2 class="text-lg font-bold mb-4">编辑提示词</h2>
+
       <div class="mb-2 flex items-center gap-2">
         <strong>名称:</strong>
         <input v-if="attributesEditState['name']" v-model="prompt.name" class="p-1 border rounded w73"
@@ -120,6 +121,7 @@ const EditButton = defineComponent({
         <EditButton :isEditing="attributesEditState['name']"
           :onToggle="() => (attributesEditState['name'] = !attributesEditState['name'])" />
       </div>
+
       <div class="mb-4 flex items-center gap-2">
         <strong>描述:</strong>
         <input v-if="attributesEditState['desc']" v-model="prompt.desc" class="p-1 border rounded w73"
@@ -130,6 +132,8 @@ const EditButton = defineComponent({
         <EditButton :isEditing="attributesEditState['desc']"
           :onToggle="() => (attributesEditState['desc'] = !attributesEditState['desc'])" />
       </div>
+
+      <!-- 主要内容编辑框 -->
       <textarea v-model="editedContent" rows="10"
         class="w-full p-2 border rounded font-mono text-sm resize-none"></textarea>
 
@@ -171,11 +175,14 @@ const EditButton = defineComponent({
             </button>
           </template>
 
+          <!-- 编辑按钮 -->
           <EditButton :isEditing="attributesEditState[key]"
             :onToggle="() => (attributesEditState[key] = !attributesEditState[key])" />
           <!-- >>循环结束 -->
         </div>
       </div>
+
+      <!-- 操作按钮 -->
       <div class="flex justify-end gap-2 mt-4">
         <button @click="close" class="btn-def bg-gray-500 hover:bg-gray-600">取消</button>
         <button @click="save" class="btn-def bg-blue-500 hover:bg-blue-600">保存</button>
