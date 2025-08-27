@@ -14,6 +14,11 @@ const prompt = props.prompt as Prompt;
 // 一个对象列表，key 为 prompt 的其他属性名，value 记录是否开启此项的编辑
 const attributesEditState = ref<{ [key: string]: boolean }>({});
 
+// 新建属性相关
+const showAddAttribute = ref(false);
+const newAttributeKey = ref('');
+const newAttributeValue = ref('');
+
 onMounted(() => {
   // 初始化 attributesEditState
   const excludedKeys = ['content', 'result'];
@@ -44,6 +49,28 @@ function save() {
 // 关闭弹窗
 function close() {
   emit('close');
+}
+
+// 新建属性
+function addAttribute() {
+  if (newAttributeKey.value) {
+    prompt[newAttributeKey.value] = newAttributeValue.value;
+    if (newAttributeValue.value === '') {
+      // 如果新属性值为空，默认开启编辑状态
+      attributesEditState.value[newAttributeKey.value] = true;
+    } else {
+      attributesEditState.value[newAttributeKey.value] = false;
+    }
+    newAttributeKey.value = '';
+    newAttributeValue.value = '';
+    showAddAttribute.value = false;
+  }
+}
+
+// 删除属性
+function deleteAttribute(key: string) {
+  delete prompt[key];
+  delete attributesEditState.value[key];
 }
 
 // 获取其他属性（排除 name, desc, content）
@@ -105,6 +132,26 @@ const EditButton = defineComponent({
       </div>
       <textarea v-model="editedContent" rows="10"
         class="w-full p-2 border rounded font-mono text-sm resize-none"></textarea>
+
+      <!-- 新建属性 -->
+      <div class="flex  items-center gap-2 mt-2">
+        <template v-if="showAddAttribute">
+          <!-- 新建属性输入框 -->
+          <input v-model="newAttributeKey" placeholder="属性名" class="p-1 border rounded w-32" />
+          <input v-model="newAttributeValue" placeholder="属性值" class="p-1 border rounded w-64" />
+          <button class="btn-def bg-blue-500 hover:bg-blue-600" @click="addAttribute">
+            添加
+          </button>
+          <button class="btn-def bg-red-500 hover:bg-red-600" @click="showAddAttribute = false">
+            取消
+          </button>
+        </template>
+        <!-- 新建属性按钮 -->
+        <button v-else class="btn-def bg-green-500 hover:bg-green-600" @click="showAddAttribute = true">
+          新建属性
+        </button>
+      </div>
+
       <!-- 动态列出其他属性 -->
       <div v-if="otherAttributes.length" class="mt-4">
         <div v-for="[key, value] in otherAttributes" :key="key" class="mb-1 flex items-center gap-2">
@@ -115,6 +162,15 @@ const EditButton = defineComponent({
             :class="prompt[key] === '' ? 'w-50' : 'w-137'">
             {{ value }}
           </span>
+
+          <!-- 如果属性值为空，显示重命名和删除按钮 -->
+          <template v-if="prompt[key] === ''">
+            <!-- 删除按钮 -->
+            <button @click="deleteAttribute(key)" class="btn-def bg-red-500 hover:bg-red-600 ml-2">
+              删除
+            </button>
+          </template>
+
           <EditButton :isEditing="attributesEditState[key]"
             :onToggle="() => (attributesEditState[key] = !attributesEditState[key])" />
           <!-- >>循环结束 -->
