@@ -85,9 +85,9 @@ const EditButton = defineComponent({
       <h2 class="text-lg font-bold mb-4">编辑提示词</h2>
       <div class="mb-2 flex items-center gap-2">
         <strong>名称:</strong>
-        <input v-if="attributesEditState['name']" v-model="prompt.name" class="p-1 border rounded w48"
+        <input v-if="attributesEditState['name']" v-model="prompt.name" class="p-1 border rounded w73"
           :name="prompt.name" />
-        <span v-else class="w48">
+        <span v-else class="w73">
           {{ prompt.name }}
         </span>
         <EditButton :isEditing="attributesEditState['name']"
@@ -95,9 +95,9 @@ const EditButton = defineComponent({
       </div>
       <div class="mb-4 flex items-center gap-2">
         <strong>描述:</strong>
-        <input v-if="attributesEditState['desc']" v-model="prompt.desc" class="p-1 border rounded w48"
+        <input v-if="attributesEditState['desc']" v-model="prompt.desc" class="p-1 border rounded w73"
           :name="prompt.name" />
-        <span v-else class="w48">
+        <span v-else class="w73">
           {{ prompt.desc }}
         </span>
         <EditButton :isEditing="attributesEditState['desc']"
