@@ -42,7 +42,7 @@ function createWindow() {
   win.maximize();
 
   // 打开开发者工具
-  // win.webContents.openDevTools()
+  VITE_DEV_SERVER_URL && win.webContents.openDevTools()
 
   // 设置 IPC 处理程序
   setupIpcHandlers(win);
