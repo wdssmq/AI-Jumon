@@ -3,33 +3,29 @@ import { app, ipcMain } from 'electron';
 import {
   saveCount,
   getCount,
-  getYmlData,
-  saveYmlData,
-  ensureStorageExists,
-  autoBackup,
+  configDB,
 } from './db/file-use';
+
+type objScopeType = {
+  StoragePath: string;
+  configDB: configDB;
+}
 
 export function setupIpcHandlers(win: Electron.BrowserWindow) {
 
-  const objScope: Record<string, any> = {};
+  const objScope = {} as objScopeType;
 
   win.webContents.on('did-finish-load', () => {
 
     // 调试输出用户数据目录
     console.log('userData:', app.getPath("userData"));
     objScope.StoragePath = path.join(app.getPath("userData"), 'ai-data');
-
-    // 判断并创建 Storage 目录
-    ensureStorageExists(objScope).then(() => {
-      console.log('User config ensured.');
-    }).catch(err => {
-      console.error('Error ensuring user config:', err);
-    });
+    objScope.configDB = new configDB(objScope);
 
     // 自动备份
-    autoBackup(objScope).then((msg) => {
+    objScope.configDB.autoBackup().then((msg: any) => {
       console.log(msg);
-    }).catch(err => {
+    }).catch((err: any) => {
       console.error('Error during auto backup:', err);
     });
 
@@ -50,14 +46,14 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
 
   // 监听来自渲染进程的 get-prompts 消息
   ipcMain.handle('get-prompts', async () => {
-    const ymlData = await getYmlData(objScope);
+    const ymlData = await objScope.configDB.getCurData();
     return ymlData;
   });
 
   // 监听来自渲染进程的 save-prompts 消息
   ipcMain.handle('save-prompts', async (_, ymlData) => {
     try {
-      await saveYmlData(ymlData, objScope);
+      await objScope.configDB.saveCurData(ymlData);
       return { success: true };
     } catch (error) {
       console.error('Error saving prompts:', error);
