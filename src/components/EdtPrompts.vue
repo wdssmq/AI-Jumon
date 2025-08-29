@@ -86,6 +86,18 @@ const otherAttributes = computed(() => {
   return Object.entries(prompt).filter(([key]) => !excludedKeys.includes(key));
 });
 
+// 判断属性是否被引用
+const isAttributeUsed = (key: string) => {
+  let rstCheck = false;
+  if (editedContent.value.includes(`{{${key}}}`)) {
+    rstCheck = true;
+  }
+  rstCheck = rstCheck || otherAttributes.value.some(([_, val]) => {
+    return typeof val === 'string' && val.includes(`{{${key}}}`);
+  });
+  return rstCheck;
+};
+
 // 封装一个通用的编辑按钮组件
 const EditButton = defineComponent({
   props: {
@@ -186,7 +198,7 @@ const EditButton = defineComponent({
         <div v-for="[key, value] in otherAttributes"
              :key="key"
              class="mb-1 flex items-center gap-2">
-          <strong>{{ key }}:</strong>
+          <strong :class="!isAttributeUsed(key) ? 'text-blue-500 font-bold' : ''">{{ key }}:</strong>
           <textarea v-if="attributesEditState[key]"
                     v-model="prompt[key]"
                     class="p-2 border rounded font-mono w-137"
@@ -214,7 +226,8 @@ const EditButton = defineComponent({
       </div>
 
       <!-- 操作按钮 -->
-      <div class="flex justify-end gap-2 mt-4">
+      <div class="flex items-center justify-end gap-2 mt-4">
+        <span>注：蓝色标记的属性为未使用状态；</span>
         <button @click="close"
                 class="btn-def bg-gray-500 hover:bg-gray-600">取消</button>
         <button @click="save"
