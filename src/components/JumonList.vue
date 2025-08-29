@@ -102,17 +102,49 @@ function generatePrompt(rnd: boolean = false) {
 
 const showEditor = ref(false);
 const selectedPrompt = ref<Prompt>({} as Prompt);
+// 修改默认配置
+const toChangeDef = ref(false);
 
 function openEditor(prompt: any) {
   selectedPrompt.value = prompt;
   showEditor.value = true;
 }
+
+
+// 占位函数
+function actChangeDef() {
+  // alert('设置为默认配置');
+}
+
 </script>
 
 <template>
   <div>
     <!-- 配置列表及切换 -->
     <div class="flex gap-2 mb-4 mr-8 pl-8 items-center justify-end">
+      <!-- checkbox 项 -->
+      <div v-if="selectedConfig !== ConfigList?.default"
+           class="flex items-center gap-2 mr-4">
+        <template v-if="!toChangeDef">
+          <label class="text-sm">设为默认
+            <input type="checkbox"
+                   @change="toChangeDef = true" />
+          </label>
+        </template>
+        <template v-else>
+          <span class="text-sm font-bold">再次确认</span>
+          <button type="button"
+                  class="btn-def bg-gray-600 hover:bg-gray-500 text-sm px-2 py-1 rounded"
+                  @click="toChangeDef = false">
+            取消
+          </button>
+          <button type="button"
+                  class="btn-def bg-blue-500 hover:bg-blue-600 text-sm px-2 py-1 rounded"
+                  @click="actChangeDef">
+            确认
+          </button>
+        </template>
+      </div>
       <label for="configSelect"
              class="mr-2 font-bold">配置切换:</label>
       <select id="configSelect"
@@ -121,7 +153,7 @@ function openEditor(prompt: any) {
         <option v-for="config in ConfigList?.list"
                 :key="config"
                 :value="config">
-          {{ config }}
+          {{ config }}<span v-if="config === ConfigList?.default">(默认)</span>
         </option>
       </select>
     </div>
