@@ -129,8 +129,9 @@ function openEditor(prompt: any) {
     <details class="mb-4">
       <summary class="cursor-pointer text-lg font-bold mb-2">变量列表</summary>
       <ul v-if="IndexConfig && IndexConfig.items">
-        <li v-for="(item, index) in IndexConfig.items" :key="index"
-          class="grid grid-cols-[20%_auto] gap-4 py-1">
+        <li v-for="(item, index) in IndexConfig.items"
+            :key="index"
+            class="grid grid-cols-[20%_auto] gap-4 py-1">
           <strong class="text-blue-700">{{ item.name }}</strong>
           <span class="text-gray-700">{{ item.content }}</span>
         </li>
@@ -138,31 +139,38 @@ function openEditor(prompt: any) {
     </details>
     <div class="flex gap-2 mb-4 pl-8">
       <button @click="generatePrompt(false)"
-        class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button>
+              class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button>
       <button @click="generatePrompt(true)"
-        class="btn-def bg-green-500 hover:bg-green-600">随机重新生成</button>
+              class="btn-def bg-green-500 hover:bg-green-600">随机重新生成</button>
 
     </div>
     <details open>
       <summary class="cursor-pointer text-lg font-bold mb-2">提示词列表</summary>
       <ul v-if="IndexConfig && IndexConfig.prompts">
-        <li v-for="(prompt, index) in IndexConfig.prompts" :key="index"
-          class="grid gap-2 p-3 rounded mb-4 bg-gray-100 shadow-sm">
+        <li v-for="(prompt, index) in IndexConfig.prompts"
+            :key="index"
+            class="grid gap-2 p-3 rounded mb-4 bg-gray-100 shadow-sm">
           <div class="flex items-center gap-2 mb-1">
             <strong class="text-purple-700 w13">{{ prompt.name }}</strong>
             <span class="text-gray-500 text-sm w64">{{ prompt.desc }}</span>
             <button @click="openEditor(prompt)"
-              class="btn-def bg-yellow-500 hover:bg-yellow-600">编辑</button>
+                    class="btn-def bg-yellow-500 hover:bg-yellow-600">编辑</button>
           </div>
-          <textarea :name="prompt.name" :id="prompt.name" rows="3" spellcheck="false"
-            class="w-full p-2 border rounded bg-white font-mono text-sm resize-none"
-            readonly>{{ prompt.result }}</textarea>
+          <textarea :name="prompt.name"
+                    :id="prompt.name"
+                    rows="3"
+                    spellcheck="false"
+                    class="w-full p-2 border rounded bg-white font-mono text-sm resize-none"
+                    readonly>{{ prompt.result }}</textarea>
           <div class="text-gray-600 text-xs mt-1">原始内容：{{ prompt.content }}</div>
         </li>
       </ul>
     </details>
 
-    <EdtPrompts v-if="showEditor" :prompt="selectedPrompt" @close="showEditor = false" @save="savePrompts" />
+    <EdtPrompts v-if="showEditor"
+                :prompt="selectedPrompt"
+                @close="showEditor = false"
+                @save="savePrompts" />
   </div>
 </template>
 
