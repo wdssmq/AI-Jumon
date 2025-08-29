@@ -9,7 +9,7 @@ import {
 } from '@/jumon/indexParser';
 
 const IndexConfig = ref<Config | null>(null);
-const ConfigList = ref<Record<string, any> | null>(null);
+const ConfigList = ref<Record<string, any>>({});
 const selectedConfig = ref<string>('');
 
 let IndexProject: IndexParser;
@@ -29,6 +29,18 @@ const fetchConfigs = async () => {
   } catch (error) {
     console.error('Failed to fetch configs:', error);
     return [];
+  }
+};
+
+const setDefConfig = async () => {
+  try {
+    // @ts-ignore
+    await window.ipcRenderer.invoke('set-default-config', selectedConfig.value);
+    ConfigList.value.default = selectedConfig.value;
+    console.log('Default config set successfully');
+  } catch (error) {
+    console.error('Failed to set default config:', error);
+
   }
 };
 
@@ -110,10 +122,11 @@ function openEditor(prompt: any) {
   showEditor.value = true;
 }
 
-
-// 占位函数
 function actChangeDef() {
-  // alert('设置为默认配置');
+  if (selectedConfig.value && selectedConfig.value !== ConfigList.value?.default) {
+    setDefConfig();
+  }
+  toChangeDef.value = false;
 }
 
 </script>
