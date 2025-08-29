@@ -44,7 +44,10 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
   });
 
   // 监听来自渲染进程的 get-prompts 消息
-  ipcMain.handle('get-prompts', async () => {
+  ipcMain.handle('get-prompts', async (_, configName = "") => {
+    if (configName) {
+      objScope.configDB.switchConfig(configName);
+    }
     const ymlData = await objScope.configDB.getCurData();
     return ymlData;
   });
