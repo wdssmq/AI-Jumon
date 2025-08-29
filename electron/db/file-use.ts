@@ -32,7 +32,6 @@ type configList = {
   name: string;
   path: string;
   db?: FileDB;
-  list?: string[];
   data?: Record<string, any>;
 }
 
@@ -42,6 +41,14 @@ export class configDB {
   private curConfig: curConfig = { name: '', path: '' };
 
   public configList: configList;
+
+  // 读取配置列表及默认配置
+  get list() {
+    return this.configList.data?.list || [];
+  }
+  get default() {
+    return this.configList.data?.default || '';
+  }
 
   constructor (objScope: Record<string, any> = {}, configName: string = '') {
     // 配置文件目录
@@ -82,8 +89,7 @@ export class configDB {
     }
     const listData = JSON.parse(listJSON);
     this.configList.data = listData;
-    this.configList.list = listData.list;
-    return listData.default;
+    return this.default;
   }
 
   switchConfig(name: string): void {
