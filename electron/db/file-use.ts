@@ -92,6 +92,22 @@ export class configDB {
     return this.default;
   }
 
+  async saveList(): Promise<void> {
+    const db = this.configList.db;
+    await db!.write(JSON.stringify(this.configList.data));
+  }
+
+
+  setDefaultConfig(name: string): void {
+    const newName = name || this.curConfig.name;
+    const curDefName = this.default
+    if (newName === curDefName || !this.list.includes(newName)) {
+      return;
+    }
+    this.configList.data!.default = newName;
+    this.saveList();
+  }
+
   switchConfig(name: string): void {
     const configName = name.replace(/\.ya?ml$/i, '') + '.yaml';
     this.curConfig = {

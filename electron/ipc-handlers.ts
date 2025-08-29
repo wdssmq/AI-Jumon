@@ -43,6 +43,11 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
     return data;
   });
 
+  // 监听来自渲染进程的 set-default-config 消息
+  ipcMain.handle('set-default-config', async (_, configName) => {
+    objScope.configDB.setDefaultConfig(configName);
+  });
+
   // 监听来自渲染进程的 get-prompts 消息
   ipcMain.handle('get-prompts', async (_, configName = "") => {
     if (configName) {
