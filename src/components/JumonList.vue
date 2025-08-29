@@ -198,6 +198,8 @@ function actChangeDef() {
           <div class="flex items-center gap-2 mb-1">
             <strong class="text-purple-700 w13">{{ prompt.name }}</strong>
             <span class="text-gray-500 text-sm w64">{{ prompt.desc }}</span>
+            <button @click="generatePrompt(false)"
+                    class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button>
             <button @click="openEditor(prompt)"
                     class="btn-def bg-yellow-500 hover:bg-yellow-600">编辑</button>
           </div>
