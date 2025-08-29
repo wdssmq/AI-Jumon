@@ -43,7 +43,7 @@ export class configDB {
 
   public configList: configList;
 
-  constructor(objScope: Record<string, any> = {}, configName: string = '') {
+  constructor (objScope: Record<string, any> = {}, configName: string = '') {
     // 配置文件目录
     this.configDir = objScope.StoragePath;
 
@@ -64,6 +64,12 @@ export class configDB {
     this.loadList().then((defaultConfig) => {
       //  载入预定的配置文件
       _this.switchConfig(configName || defaultConfig);
+      // 自动备份
+      this.autoBackup().then((msg: any) => {
+        console.log(msg);
+      }).catch((err: any) => {
+        console.error('Error during auto backup:', err);
+      });
     });
   }
 
@@ -92,6 +98,7 @@ export class configDB {
       name: configName,
       path: path.join(this.configDir, configName),
     };
+    // console.log(this.curConfig);
     this.curConfig.db = new FileDB(this.curConfig.path);
   }
 
@@ -147,6 +154,9 @@ export class configDB {
     // 读取当前配置文件内容，写入备份文件
     const db = this.curConfig.db;
     const content = await db!.read();
+    if (!db?.isExists) {
+      return `待备份文件不存在：${this.curConfig.path}`;
+    }
     const backupDb = new FileDB(backupFilePath);
     await backupDb.write(content);
     return `备份完成: ${backupFilePath}`;

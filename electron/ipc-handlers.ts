@@ -22,13 +22,6 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
     objScope.StoragePath = path.join(app.getPath("userData"), 'ai-data');
     objScope.configDB = new configDB(objScope);
 
-    // 自动备份
-    objScope.configDB.autoBackup().then((msg: any) => {
-      console.log(msg);
-    }).catch((err: any) => {
-      console.error('Error during auto backup:', err);
-    });
-
     win?.webContents.send('main-process-message', (new Date).toLocaleString());
   });
 
