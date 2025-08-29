@@ -76,6 +76,9 @@ export class configDB {
   async loadList(): Promise<string> {
     this.configList.db = new FileDB(this.configList.path);
     const listJSON = await this.configList.db.read(`{"list": ["demo"],"default": "demo"}`);
+    if (!this.configList.db.isExists) {
+      this.configList.db.write(listJSON);
+    }
     const listData = JSON.parse(listJSON);
     this.configList.list = listData.list;
     return listData.default;
