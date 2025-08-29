@@ -14,18 +14,7 @@ const selectedConfig = ref<string>('');
 
 let IndexProject: IndexParser;
 let result: Config[];
-// const IndexProject = ref<IndexParser | null>(null);
 
-const fetchPrompts = async (configName = "") => {
-  try {
-    // @ts-ignore
-    result = await window.ipcRenderer.invoke('get-prompts', configName);
-    console.log('Fetched Prompts:', result);
-    generatePrompt();
-  } catch (error) {
-    console.error('Failed to fetch prompts:', error);
-  }
-};
 
 // 请求配置列表
 // {"list": ["demo"],"default": "demo"}
@@ -40,6 +29,17 @@ const fetchConfigs = async () => {
   } catch (error) {
     console.error('Failed to fetch configs:', error);
     return [];
+  }
+};
+
+const fetchPrompts = async (configName = "") => {
+  try {
+    // @ts-ignore
+    result = await window.ipcRenderer.invoke('get-prompts', configName);
+    console.log('Fetched Prompts:', result);
+    generatePrompt();
+  } catch (error) {
+    console.error('Failed to fetch prompts:', error);
   }
 };
 
