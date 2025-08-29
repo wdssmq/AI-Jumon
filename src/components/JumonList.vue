@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import EdtPrompts from '@/components/EdtPrompts.vue';
 import {
   IndexParser,
@@ -9,18 +9,37 @@ import {
 } from '@/jumon/indexParser';
 
 const IndexConfig = ref<Config | null>(null);
+const ConfigList = ref<Record<string, any> | null>(null);
+const selectedConfig = ref<string>('');
+
 let IndexProject: IndexParser;
 let result: Config[];
 // const IndexProject = ref<IndexParser | null>(null);
 
-const fetchPrompts = async () => {
+const fetchPrompts = async (configName = "") => {
   try {
     // @ts-ignore
-    result = await window.ipcRenderer.invoke('get-prompts');
+    result = await window.ipcRenderer.invoke('get-prompts', configName);
     console.log('Fetched Prompts:', result);
     generatePrompt();
   } catch (error) {
     console.error('Failed to fetch prompts:', error);
+  }
+};
+
+// 请求配置列表
+// {"list": ["demo"],"default": "demo"}
+const fetchConfigs = async () => {
+  try {
+    // @ts-ignore
+    const configs = await window.ipcRenderer.invoke('get-config-list');
+    console.log('Fetched Configs:', configs);
+    selectedConfig.value = configs.default || '';
+    ConfigList.value = configs;
+    return configs;
+  } catch (error) {
+    console.error('Failed to fetch configs:', error);
+    return [];
   }
 };
 
@@ -45,7 +64,15 @@ const savePrompts = async (args: Prompt) => {
 };
 
 onMounted(() => {
+  fetchConfigs();
   fetchPrompts();
+});
+
+// 监听 selectedConfig 变化，重新加载 prompts
+watch(selectedConfig, (newConfig) => {
+  if (newConfig) {
+    fetchPrompts(newConfig);
+  }
 });
 
 function generatePrompt(rnd: boolean = false) {
@@ -84,6 +111,21 @@ function openEditor(prompt: any) {
 
 <template>
   <div>
+    <!-- 配置列表及切换 -->
+    <div class="flex gap-2 mb-4 mr-8 pl-8 items-center justify-end">
+      <label for="configSelect"
+             class="mr-2 font-bold">配置切换:</label>
+      <select id="configSelect"
+              class="p-1 rounded"
+              v-model="selectedConfig">
+        <option v-for="config in ConfigList?.list"
+                :key="config"
+                :value="config">
+          {{ config }}
+        </option>
+      </select>
+    </div>
+
     <details class="mb-4">
       <summary class="cursor-pointer text-lg font-bold mb-2">变量列表</summary>
       <ul v-if="IndexConfig && IndexConfig.items">
