@@ -44,6 +44,12 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
     return count;
   });
 
+  // 监听来自渲染进程的 get-config-list 消息
+  ipcMain.handle('get-config-list', async () => {
+    const data = objScope.configDB.configList.data;
+    return data;
+  });
+
   // 监听来自渲染进程的 get-prompts 消息
   ipcMain.handle('get-prompts', async () => {
     const ymlData = await objScope.configDB.getCurData();

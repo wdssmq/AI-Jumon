@@ -33,6 +33,7 @@ type configList = {
   path: string;
   db?: FileDB;
   list?: string[];
+  data?: Record<string, any>;
 }
 
 export class configDB {
@@ -80,6 +81,7 @@ export class configDB {
       this.configList.db.write(listJSON);
     }
     const listData = JSON.parse(listJSON);
+    this.configList.data = listData;
     this.configList.list = listData.list;
     return listData.default;
   }
