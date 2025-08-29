@@ -64,12 +64,6 @@ export class configDB {
     this.loadList().then((defaultConfig) => {
       //  载入预定的配置文件
       _this.switchConfig(configName || defaultConfig);
-      // 自动备份
-      this.autoBackup().then((msg: any) => {
-        console.log(msg);
-      }).catch((err: any) => {
-        console.error('Error during auto backup:', err);
-      });
     });
   }
 
@@ -100,6 +94,12 @@ export class configDB {
     };
     // console.log(this.curConfig);
     this.curConfig.db = new FileDB(this.curConfig.path);
+    // 自动备份
+    this.autoBackup().then((msg: any) => {
+      console.log(msg);
+    }).catch((err: any) => {
+      console.error('Error during auto backup:', err);
+    });
   }
 
   async getCurData(): Promise<curConfig> {
