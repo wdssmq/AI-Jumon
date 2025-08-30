@@ -81,7 +81,8 @@ onMounted(() => {
 });
 
 // 监听 selectedConfig 变化，重新加载 prompts
-watch(selectedConfig, (newConfig) => {
+watch(selectedConfig, (newConfig, oldConfig) => {
+  if (!oldConfig) return;
   if (newConfig) {
     fetchPrompts(newConfig);
   }
