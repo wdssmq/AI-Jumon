@@ -132,7 +132,7 @@ export class IndexParser {
   }
 
   public generatePrompt(promptName: string): string {
-    if (!this.prompts[promptName]) {
+    if (!(promptName in this.prompts)) {
       throw new Error(`Prompt '${promptName}' not found.`);
     }
 
