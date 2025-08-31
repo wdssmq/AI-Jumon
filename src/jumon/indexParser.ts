@@ -12,8 +12,8 @@ interface Prompt {
 }
 
 interface Config {
-  items?: Item[];
-  prompts?: Prompt[];
+  items: Item[];
+  prompts: Prompt[];
 }
 
 export class IndexParser {
@@ -22,42 +22,41 @@ export class IndexParser {
   private prompts: Record<string, string> = {};
   private cachedValues: Record<string, string> = {};
 
-  constructor(jsonData: string | Config[]) {
+  constructor (jsonData: string | Config) {
     this.loadConfig(jsonData);
   }
 
-  private loadConfig(jsonData: string | Config[]): void {
+  private loadConfig(jsonData: string | Config): void {
     try {
-      const config: Config[] = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+      const config: Config = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
 
-      config.forEach((section) => {
-        if (section.items) {
-          section.items.forEach((item) => {
-            this.items[item.name] = item.content.trim();
-          });
-        }
+      if (config.items) {
+        config.items.forEach((item) => {
+          this.items[item.name] = item.content.trim();
+        });
+      }
 
-        if (section.prompts) {
-          section.prompts.forEach((prompt) => {
-            const promptName = prompt.name;
-            this.prompts[promptName] = prompt.content.trim();
+      if (config.prompts) {
+        config.prompts.forEach((prompt) => {
+          const promptName = prompt.name;
+          this.prompts[promptName] = prompt.content.trim();
 
-            if (prompt.items) {
-              this.subItems[promptName] = this.subItems[promptName] || {};
-              prompt.items.forEach((item) => {
-                this.subItems[promptName][item.name] = item.content.trim();
-              });
-            }
-
-            Object.keys(prompt).forEach((key) => {
-              if (key !== 'name' && key !== 'content' && key !== 'items' && key !== 'desc') {
-                this.subItems[promptName] = this.subItems[promptName] || {};
-                this.subItems[promptName][key] = prompt[key].trim();
-              }
+          if (prompt.items) {
+            this.subItems[promptName] = this.subItems[promptName] || {};
+            prompt.items.forEach((item) => {
+              this.subItems[promptName][item.name] = item.content.trim();
             });
+          }
+
+          Object.keys(prompt).forEach((key) => {
+            if (key !== 'name' && key !== 'content' && key !== 'items' && key !== 'desc') {
+              this.subItems[promptName] = this.subItems[promptName] || {};
+              this.subItems[promptName][key] = prompt[key].trim();
+            }
           });
-        }
-      });
+        });
+      }
+
     } catch (error: any) {
       throw new Error(`Failed to load JSON data: ${error.message}`);
     }
