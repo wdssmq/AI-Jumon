@@ -8,13 +8,14 @@ import {
   type Prompt,
 } from '@/jumon/indexParser';
 
-const IndexConfig = ref<Config | null>(null);
+const IndexConfig = ref<Config>({
+  items: [],
+  prompts: []
+});
 const ConfigList = ref<Record<string, any>>({});
 const selectedConfig = ref<string>('');
 
 let IndexProject: IndexParser;
-let result: Config[];
-
 
 // 请求配置列表
 // {"list": ["demo"],"default": "demo"}
@@ -44,11 +45,38 @@ const setDefConfig = async () => {
   }
 };
 
+
+// 预解析 result
+function preProcessResult(result: Config[] | Config) {
+  const IndexData: Config = {
+    items: [],
+    prompts: []
+  };
+  // 如果 result 不是数组且有 items 和 prompts，直接返回
+  if (!Array.isArray(result)) {
+    IndexData.items = result.items || [];
+    IndexData.prompts = result.prompts || [];
+  }
+
+  if (Array.isArray(result)) {
+    result.forEach((el) => {
+      if (el.items) {
+        IndexData.items = el.items || [];
+      }
+      if (el.prompts) {
+        IndexData.prompts = el.prompts || [];
+      }
+    });
+  }
+  return IndexData;
+}
+
 const fetchPrompts = async (configName = "") => {
   try {
     // @ts-ignore
-    result = await window.ipcRenderer.invoke('get-prompts', configName);
-    console.log('Fetched Prompts:', result);
+    const result = await window.ipcRenderer.invoke('get-prompts', configName);
+    IndexConfig.value = preProcessResult(result);
+    console.log('Fetched Prompts:', IndexConfig.value);
     generatePrompt();
   } catch (error) {
     console.error('Failed to fetch prompts:', error);
@@ -56,23 +84,29 @@ const fetchPrompts = async (configName = "") => {
 };
 
 const savePrompts = async (args: Prompt) => {
-  result.forEach((el: Config) => {
-    if (el.prompts) {
-      const index = el.prompts.findIndex((p) => p.name === args.name);
-      if (index !== -1) {
-        el.prompts[index] = args;
-      }
+  const IndexData = IndexConfig.value;
+  if (IndexData.prompts) {
+    const index = IndexData.prompts.findIndex((p) => p.name === args.name);
+    if (index !== -1) {
+      IndexData.prompts[index] = args;
     }
+  }
+  // 深拷贝，去除响应式
+  const plainData = JSON.parse(JSON.stringify(IndexData));
+  // 移除 result
+  plainData.prompts.forEach((p: Prompt) => {
+    delete p.result;
   });
+  console.log('Saving Prompts:', plainData);
+
   try {
     // @ts-ignore
-    await window.ipcRenderer.invoke('save-prompts', result);
+    await window.ipcRenderer.invoke('save-prompts', plainData);
     console.log('Prompt saved successfully');
     generatePrompt();
   } catch (error) {
     console.error('Failed to save prompt:', error);
   }
-
 };
 
 onMounted(() => {
@@ -88,29 +122,20 @@ watch(selectedConfig, (newConfig, oldConfig) => {
   }
 });
 
+
 function generatePrompt(rnd: boolean = false) {
-  IndexProject = new IndexParser(result);
-  const obj = {} as Config;
-  result.forEach((el: Config) => {
-    if (el.items) {
-      obj.items = el.items;
-    }
-    if (el.prompts) {
-      obj.prompts = el.prompts;
-    }
-  });
-  // obj.prompts 随机排序
-  if (rnd && obj.prompts) {
-    obj.prompts.sort(() => Math.random() - 0.5);
+  IndexProject = new IndexParser(IndexConfig.value);
+
+  // prompts 随机排序
+  if (rnd && IndexConfig.value.prompts) {
+    IndexConfig.value.prompts.sort(() => Math.random() - 0.5);
   }
-  obj.prompts?.forEach((prompt) => {
+  IndexConfig.value.prompts?.forEach((prompt) => {
     const generated = IndexProject.generatePrompt(prompt.name);
     // console.log('Generated Prompt:', generated);
     prompt.result = generated;
   });
-  console.log('Generated Config:', obj);
-
-  IndexConfig.value = obj;
+  console.log('Generated Config:', IndexConfig.value);
 }
 
 const showEditor = ref(false);
