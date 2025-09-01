@@ -48,6 +48,10 @@ function save() {
 
 // 关闭弹窗
 function close() {
+  // 防止非预期关闭
+  if (isAnyEditing.value) {
+    return;
+  }
   emit('close');
 }
 
@@ -84,6 +88,14 @@ function deleteAttribute(key: string) {
 const otherAttributes = computed(() => {
   const excludedKeys = ['name', 'desc', 'content', 'result'];
   return Object.entries(prompt).filter(([key]) => !excludedKeys.includes(key));
+});
+
+const isAnyEditing = computed(() => {
+  let rst = false;
+  Object.values(attributesEditState.value).forEach(v => {
+    if (v) rst = true;
+  });
+  return rst;
 });
 
 // 判断属性是否被引用
@@ -162,6 +174,8 @@ const EditButton = defineComponent({
 
       <!-- 主要内容编辑框 -->
       <textarea v-model="editedContent"
+                @focus="attributesEditState['content'] = true"
+                @blur="attributesEditState['content'] = false"
                 rows="10"
                 class="w-full p-2 border rounded font-mono text-sm resize-none"></textarea>
 
