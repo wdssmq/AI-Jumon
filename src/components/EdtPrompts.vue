@@ -42,7 +42,7 @@ watch(
 
 // 保存编辑内容
 function save() {
-  emit('save', { ...prompt, content: editedContent.value });
+  emit('save', "edit", { ...prompt, content: editedContent.value });
   emit('close');
 }
 

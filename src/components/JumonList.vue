@@ -72,6 +72,8 @@ function preProcessResult(result: Config[] | Config) {
 }
 
 const fetchPrompts = async (configName = "") => {
+  console.log('----');
+
   try {
     // @ts-ignore
     const result = await window.ipcRenderer.invoke('get-prompts', configName);
@@ -83,14 +85,23 @@ const fetchPrompts = async (configName = "") => {
   }
 };
 
-const savePrompts = async (args: Prompt) => {
+type SavePromptsType = 'add' | 'edit' | 'delete';
+// 实际添加新条目后通过编辑保存
+const savePrompts = async (type: SavePromptsType, args: Prompt) => {
   const IndexData = IndexConfig.value;
-  if (IndexData.prompts) {
-    const index = IndexData.prompts.findIndex((p) => p.name === args.name);
-    if (index !== -1) {
-      IndexData.prompts[index] = args;
-    }
+  const index = IndexData.prompts.findIndex((p) => p.name === args.name);
+
+  if (index !== -1 && type === 'edit') {
+    IndexData.prompts[index] = args;
+    console.log('Edited Prompt:', args.name);
   }
+
+  if (index !== -1 && type === 'delete') {
+    IndexData.prompts.splice(index, 1);
+    toDeletePrompt.value = false;
+    console.log('Deleted Prompt:', args.name);
+  }
+
   // 深拷贝，去除响应式
   const plainData = JSON.parse(JSON.stringify(IndexData));
   // 移除 result
@@ -142,6 +153,8 @@ const showEditor = ref(false);
 const selectedPrompt = ref<Prompt>({} as Prompt);
 // 修改默认配置
 const toChangeDef = ref(false);
+// 删除提示词
+const toDeletePrompt = ref(false);
 
 function openEditor(prompt: any) {
   selectedPrompt.value = prompt;
@@ -153,6 +166,40 @@ function actChangeDef() {
     setDefConfig();
   }
   toChangeDef.value = false;
+}
+
+function addPrompt() {
+  const IndexData = IndexConfig.value;
+  const count = IndexData.prompts.length + 1;
+  const newPrompt: Prompt = {
+    name: `new ${count}`,
+    desc: `新建提示词 ${count} 的描述`,
+    content: "",
+  };
+  IndexData.prompts.push(newPrompt);
+  // 打开编辑器
+  openEditor(newPrompt);
+}
+
+function deletePrompt(name: string) {
+  if (!name) return;
+  const IndexData = IndexConfig.value;
+  const arrPrompts = IndexData.prompts.filter((p) => p.name === name);
+  // 如果有重复值，弹出警告
+  if (arrPrompts.length > 1) {
+    alert(`存在重复的名称项，请重新命名 - ${name}`);
+    return;
+  }
+  // 执行删除操作
+  savePrompts('delete', arrPrompts[0]);
+}
+
+function onDeletePromptChange(e: Event) {
+  const name = (e.target as HTMLSelectElement).value;
+  const prompt = IndexConfig.value.prompts.find(p => p.name === name);
+  if (prompt) {
+    selectedPrompt.value = prompt;
+  }
 }
 
 </script>
@@ -197,6 +244,7 @@ function actChangeDef() {
       </select>
     </div>
 
+    <!-- 变量列表 -->
     <details class="mb-4">
       <summary class="cursor-pointer text-lg font-bold mb-2">变量列表</summary>
       <ul v-if="IndexConfig && IndexConfig.items">
@@ -208,13 +256,39 @@ function actChangeDef() {
         </li>
       </ul>
     </details>
+
+    <!-- 控制条 -->
     <div class="flex gap-2 mb-4 pl-8">
       <button @click="generatePrompt(false)"
               class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button>
       <button @click="generatePrompt(true)"
-              class="btn-def bg-green-500 hover:bg-green-600">随机重新生成</button>
+              class="btn-def bg-green-500 hover:bg-green-600">随机排序</button>
+      <button @click="addPrompt()"
+              class="btn-def bg-gray-500 hover:bg-gray-600">添加提示词</button>
+      <template v-if="!toDeletePrompt">
+        <button @click="toDeletePrompt = true"
+                class="btn-def bg-red-500 hover:bg-red-600">删除提示词</button>
+      </template>
+      <template v-else>
+        <select name="deletePrompt"
+                id="deletePrompt"
+                @change="onDeletePromptChange">
+          <option value="">请选择要删除的提示词</option>
+          <option v-for="(prompt, index) in IndexConfig.prompts"
+                  :key="index"
+                  :value="prompt.name">
+            {{ prompt.name }}
+          </option>
+        </select>
+        <button @click="deletePrompt(selectedPrompt.name)"
+                class="btn-def bg-red-500 hover:bg-red-600">确认</button>
+        <button @click="toDeletePrompt = false"
+                class="btn-def bg-gray-500 hover:bg-gray-600">取消</button>
+      </template>
 
     </div>
+
+    <!-- 提示词列表 -->
     <details open>
       <summary class="cursor-pointer text-lg font-bold mb-2">提示词列表</summary>
       <ul v-if="IndexConfig && IndexConfig.prompts">
@@ -222,7 +296,7 @@ function actChangeDef() {
             :key="index"
             class="grid gap-2 p-3 rounded mb-4 bg-gray-100 shadow-sm">
           <div class="flex items-center gap-2 mb-1">
-            <strong class="text-purple-700 w13">{{ prompt.name }}</strong>
+            <strong class="text-purple-700 w17">{{ prompt.name }}</strong>
             <span class="text-gray-500 text-sm w64">{{ prompt.desc }}</span>
             <button @click="generatePrompt(false)"
                     class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button>
