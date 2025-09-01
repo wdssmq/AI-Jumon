@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, computed, onMounted, defineComponent, h } from 'vue';
+import { ref, watch, defineEmits, computed, defineComponent, h, onBeforeMount } from 'vue';
 import { type Prompt } from '@/jumon/indexParser';
 
 const props = defineProps({
@@ -19,7 +19,7 @@ const showAddAttribute = ref(false);
 const newAttributeKey = ref('');
 const newAttributeValue = ref('');
 
-onMounted(() => {
+onBeforeMount(() => {
   // 初始化 attributesEditState
   const excludedKeys = ['content', 'result'];
   const obj: { [key: string]: boolean } = {};
