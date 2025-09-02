@@ -7,7 +7,7 @@ function goIndex() {
 }
 
 // markdown
-import VueMarkdownRender from 'vue-markdown-render';
+import MarkdownIt from 'markdown-it';
 const mdContent = `
 ## 投喂支持
 
@@ -22,10 +22,12 @@ RSS 订阅：[https://feed.wdssmq.com](https://feed.wdssmq.com "沉冰浮水博�
 更多「小代码」：[https://cn.bing.com/search?q=小代码+沉冰浮水](https://cn.bing.com/search?q=%E5%B0%8F%E4%BB%A3%E7%A0%81+%E6%B2%89%E5%86%B0%E6%B5%AE%E6%B0%B4 "小代码 沉冰浮水 - 必应搜索")
 
 `;
+
+const htmlContent = new MarkdownIt().render(mdContent);
 </script>
 <template>
   <h2>AboutView</h2>
   <button class="btn-rt" @click="goIndex">Go to Index</button>
 
-  <VueMarkdownRender :source="mdContent" />
+  <div v-html="htmlContent"></div>
 </template>

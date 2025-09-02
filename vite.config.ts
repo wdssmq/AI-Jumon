@@ -50,8 +50,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.join(__dirname, 'src'),
-      // Punycode polyfill
-      'punycode': path.join(__dirname, 'src/polyfills/punycode'),
     },
   },
 })
