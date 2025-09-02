@@ -12,14 +12,12 @@ type objScopeType = {
 export function setupIpcHandlers(win: Electron.BrowserWindow) {
 
   const objScope = {} as objScopeType;
+  objScope.StoragePath = path.join(app.getPath("userData"), 'ai-data');
+  objScope.configDB = new configDB(objScope);
 
   win.webContents.on('did-finish-load', () => {
-
     // 调试输出用户数据目录
     console.log('userData:', app.getPath("userData"));
-    objScope.StoragePath = path.join(app.getPath("userData"), 'ai-data');
-    objScope.configDB = new configDB(objScope);
-
     win?.webContents.send('main-process-message', (new Date).toLocaleString());
   });
 
