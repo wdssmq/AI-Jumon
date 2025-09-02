@@ -5,6 +5,17 @@ const router = useRouter()
 function goIndex() {
   router.push('/')
 }
+import { onMounted, ref } from 'vue';
+
+const storagePath = ref('');
+const fetchStoragePath = async () => {
+  const path = await window.ipcRenderer.invoke('get-storage-path');
+  storagePath.value = path;
+}
+
+onMounted(() => {
+  fetchStoragePath();
+});
 
 // markdown
 import MarkdownIt from 'markdown-it';
@@ -28,6 +39,6 @@ const htmlContent = new MarkdownIt().render(mdContent);
 <template>
   <h2>AboutView</h2>
   <button class="btn-rt" @click="goIndex">Go to Index</button>
-
+  <p>存储路径: {{ storagePath }}</p>
   <div v-html="htmlContent"></div>
 </template>

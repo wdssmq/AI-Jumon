@@ -23,6 +23,9 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
     win?.webContents.send('main-process-message', (new Date).toLocaleString());
   });
 
+  // 获取存储路径
+  ipcMain.handle('get-storage-path', () => objScope.StoragePath);
+
   // 监听来自渲染进程的 get-config-list 消息
   ipcMain.handle('get-config-list', async () => {
     const data = objScope.configDB.configList.data;
