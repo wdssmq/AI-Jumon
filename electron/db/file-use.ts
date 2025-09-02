@@ -9,19 +9,6 @@ import {
 } from "../utils/base";
 import path from 'node:path'
 
-export const saveCount = async (count: number, objScope: Record<string, any> = {}) => {
-  const storageDir = objScope.StoragePath;
-  const db = new FileDB(path.join(storageDir, "count.txt"));
-  await db.write(count.toString());
-};
-
-export const getCount = async (objScope: Record<string, any> = {}) => {
-  const storageDir = objScope.StoragePath;
-  const db = new FileDB(path.join(storageDir, "count.txt"));
-  const count = await db.read('0');
-  return parseInt(count, 10);
-};
-
 type curConfig = {
   name: string;
   path: string;

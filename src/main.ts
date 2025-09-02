@@ -11,7 +11,4 @@ createApp(App)
   window.ipcRenderer.on('main-process-message', (_event, message) => {
     console.log(message)
   })
-  window.ipcRenderer.on('click-count', (_event, message) => {
-    console.log(message)
-  })
 })
