@@ -4,7 +4,6 @@ AI 提示词管理及构建工具，注重碎片化拼接及复用。
 
 ## 开发运行
 
-
 建议使用 `pnpm`；
 
 然后 electron 依赖无法安装的见：[附加说明](https://github.com/wdssmq/electron-demo/blob/main/note.md "note.md")，就是需要单独为其指定镜像源；
@@ -18,6 +17,10 @@ AI 提示词管理及构建工具，注重碎片化拼接及复用。
 > wdssmq/electron-demo: 研究 electron 的使用和开发；
 >
 > [https://github.com/wdssmq/electron-demo](https://github.com/wdssmq/electron-demo "wdssmq/electron-demo: 研究 electron 的使用和开发；")
+
+## 其他
+
+数据文件在 `%APPDATA%\AI-Jumon\ai-data` 目录下；
 
 ## 投喂支持
 
