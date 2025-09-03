@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+import EdtItems from '@/components/EdtItems.vue';
 import EdtPrompts from '@/components/EdtPrompts.vue';
 import {
   IndexParser,
   type Config,
-  // type Item,
+  type Item,
   type Prompt,
 } from '@/jumon/indexParser';
 
@@ -102,13 +103,10 @@ const savePrompts = async (type: SavePromptsType, args: Prompt) => {
     console.log('Deleted Prompt:', args.name);
   }
 
-  // 深拷贝，去除响应式
-  const plainData = JSON.parse(JSON.stringify(IndexData));
-  // 移除 result
-  plainData.prompts.forEach((p: Prompt) => {
-    delete p.result;
-  });
-  console.log('Saving Prompts:', plainData);
+  // 深拷贝并移除 prompts 中的 result 字段
+  const plainData = JSON.parse(JSON.stringify(IndexConfig.value));
+  plainData.prompts?.forEach((p: Prompt) => delete p.result);
+
 
   try {
     // @ts-ignore
@@ -119,6 +117,25 @@ const savePrompts = async (type: SavePromptsType, args: Prompt) => {
     console.error('Failed to save prompt:', error);
   }
 };
+
+
+async function saveItems(items: Item[]) {
+  // 更新本地配置
+  IndexConfig.value.items = items;
+
+  // 深拷贝并移除 prompts 中的 result 字段
+  const plainData = JSON.parse(JSON.stringify(IndexConfig.value));
+  plainData.prompts?.forEach((p: Prompt) => delete p.result);
+
+  try {
+    // @ts-ignore
+    await window.ipcRenderer.invoke('save-prompts', plainData);
+    console.log('Items saved successfully');
+    generatePrompt();
+  } catch (error) {
+    console.error('Failed to save items:', error);
+  }
+}
 
 onMounted(() => {
   fetchConfigs();
@@ -149,7 +166,10 @@ function generatePrompt(rnd: boolean = false) {
   console.log('Generated Config:', IndexConfig.value);
 }
 
-const showEditor = ref(false);
+// 变量编辑器
+const showItemsEditor = ref(false);
+// 提示词编辑器
+const showPromptEditor = ref(false);
 const selectedPrompt = ref<Prompt>({} as Prompt);
 // 修改默认配置
 const toChangeDef = ref(false);
@@ -158,7 +178,7 @@ const toDeletePrompt = ref(false);
 
 function openEditor(prompt: any) {
   selectedPrompt.value = prompt;
-  showEditor.value = true;
+  showPromptEditor.value = true;
 }
 
 function actChangeDef() {
@@ -246,7 +266,10 @@ function onDeletePromptChange(e: Event) {
 
     <!-- 变量列表 -->
     <details class="mb-4">
-      <summary class="cursor-pointer text-lg font-bold mb-2">变量列表</summary>
+      <summary class="cursor-pointer text-lg font-bold mb-2">变量列表
+        <button @click="showItemsEditor = true"
+                class="btn-def bg-purple-500 hover:bg-purple-600">编辑变量</button>
+      </summary>
       <ul v-if="IndexConfig && IndexConfig.items">
         <li v-for="(item, index) in IndexConfig.items"
             :key="index"
@@ -314,10 +337,15 @@ function onDeletePromptChange(e: Event) {
       </ul>
     </details>
 
-    <EdtPrompts v-if="showEditor"
+    <EdtPrompts v-if="showPromptEditor"
                 :prompt="selectedPrompt"
-                @close="showEditor = false"
+                @close="showPromptEditor = false"
                 @save="savePrompts" />
+
+    <EdtItems v-if="showItemsEditor"
+              :items="IndexConfig.items"
+              @close="showItemsEditor = false"
+              @save="saveItems" />
   </div>
 </template>
 
