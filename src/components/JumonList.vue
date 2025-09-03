@@ -192,8 +192,8 @@ function addPrompt() {
   const IndexData = IndexConfig.value;
   const count = IndexData.prompts.length + 1;
   const newPrompt: Prompt = {
-    name: `new ${count}`,
-    desc: `新建提示词 ${count} 的描述`,
+    name: `p${count}`,
+    desc: `新建提示词 p${count} 的描述`,
     content: "",
   };
   IndexData.prompts.push(newPrompt);
@@ -282,12 +282,8 @@ function onDeletePromptChange(e: Event) {
 
     <!-- 控制条 -->
     <div class="flex gap-2 mb-4 pl-8">
-      <button @click="generatePrompt(false)"
-              class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button>
-      <button @click="generatePrompt(true)"
-              class="btn-def bg-green-500 hover:bg-green-600">随机排序</button>
-      <button @click="addPrompt()"
-              class="btn-def bg-gray-500 hover:bg-gray-600">添加提示词</button>
+      <!-- <button @click="generatePrompt(false)"
+              class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button> -->
       <template v-if="!toDeletePrompt">
         <button @click="toDeletePrompt = true"
                 class="btn-def bg-red-500 hover:bg-red-600">删除提示词</button>
@@ -309,6 +305,10 @@ function onDeletePromptChange(e: Event) {
         <button @click="toDeletePrompt = false"
                 class="btn-def bg-gray-500 hover:bg-gray-600">取消</button>
       </template>
+      <button @click="addPrompt()"
+              class="btn-def bg-gray-500 hover:bg-gray-600">添加提示词</button>
+      <button @click="generatePrompt(true)"
+              class="btn-def bg-green-500 hover:bg-green-600">随机排序</button>
 
     </div>
 
