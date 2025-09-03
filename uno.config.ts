@@ -10,5 +10,6 @@ export default defineConfig({
   shortcuts: {
     'btn-rt': 'fixed right-4 top-4',
     'btn-def': 'px-3 py-1 text-white rounded b-style-none',
+    'input-def': 'p-1 border rounded'
   },
 })

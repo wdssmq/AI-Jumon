@@ -254,7 +254,7 @@ function onDeletePromptChange(e: Event) {
       <label for="configSelect"
              class="mr-2 font-bold">配置切换:</label>
       <select id="configSelect"
-              class="p-1 rounded"
+              class="input-def"
               v-model="selectedConfig">
         <option v-for="config in ConfigList?.list"
                 :key="config"
@@ -295,6 +295,7 @@ function onDeletePromptChange(e: Event) {
       <template v-else>
         <select name="deletePrompt"
                 id="deletePrompt"
+                class="input-def"
                 @change="onDeletePromptChange">
           <option value="">请选择要删除的提示词</option>
           <option v-for="(prompt, index) in IndexConfig.prompts"
