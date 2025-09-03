@@ -274,7 +274,7 @@ function onDeletePromptChange(e: Event) {
         <li v-for="(item, index) in IndexConfig.items"
             :key="index"
             class="grid grid-cols-[20%_auto] gap-4 py-1">
-          <strong class="text-blue-700">{{ item.name }}</strong>
+          <strong class="text-blue-700">{{ `\{\{${item.name}\}\}` }}</strong>
           <span class="text-gray-700">{{ item.content }}</span>
         </li>
       </ul>
