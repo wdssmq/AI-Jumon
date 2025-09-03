@@ -95,13 +95,14 @@ export class IndexParser {
       }
 
       let varContent = '';
-      // 如果变量有内部定义
-      if (this.curPrompt && this.subItems[this.curPrompt]) {
-        varContent = this.subItems[this.curPrompt][varName];
-      }
-      // 否则使用全局定义
+      // 默认使用全局定义
       if (this.items[varName]) {
         varContent = this.items[varName];
+      }
+
+      // 如果变量有内部定义
+      if (this.curPrompt && this.subItems[this.curPrompt] && this.subItems[this.curPrompt][varName]) {
+        varContent = this.subItems[this.curPrompt][varName];
       }
 
       return this.generateText(varContent);
