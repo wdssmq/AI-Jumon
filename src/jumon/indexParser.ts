@@ -18,8 +18,9 @@ interface Config {
 
 export class IndexParser {
   private items: Record<string, string> = {};
-  private subItems: Record<string, Record<string, string>> = {};
   private prompts: Record<string, string> = {};
+  private subItems: Record<string, Record<string, string>> = {};
+  private curPrompt: string = '';
   private cachedValues: Record<string, string> = {};
 
   constructor (jsonData: string | Config) {
@@ -30,6 +31,7 @@ export class IndexParser {
     try {
       const config: Config = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
 
+      // 全局变量
       if (config.items) {
         config.items.forEach((item) => {
           this.items[item.name] = item.content.trim();
@@ -40,14 +42,14 @@ export class IndexParser {
         config.prompts.forEach((prompt) => {
           const promptName = prompt.name;
           this.prompts[promptName] = prompt.content.trim();
-
+          // 内部属性 - 形式一
           if (prompt.items) {
             this.subItems[promptName] = this.subItems[promptName] || {};
             prompt.items.forEach((item) => {
               this.subItems[promptName][item.name] = item.content.trim();
             });
           }
-
+          // 内部属性 - 形式二
           Object.keys(prompt).forEach((key) => {
             if (key !== 'name' && key !== 'content' && key !== 'items' && key !== 'desc') {
               this.subItems[promptName] = this.subItems[promptName] || {};
@@ -92,12 +94,17 @@ export class IndexParser {
         return this.cachedValues[varName] || '';
       }
 
+      let varContent = '';
+      // 如果变量有内部定义
+      if (this.curPrompt && this.subItems[this.curPrompt]) {
+        varContent = this.subItems[this.curPrompt][varName];
+      }
+      // 否则使用全局定义
       if (this.items[varName]) {
-        return this.generateText(this.items[varName]);
+        varContent = this.items[varName];
       }
 
-      console.warn(`Warning: Variable '${varName}' not found.`);
-      return '';
+      return this.generateText(varContent);
     });
   }
 
@@ -134,12 +141,7 @@ export class IndexParser {
     if (!(promptName in this.prompts)) {
       throw new Error(`Prompt '${promptName}' not found.`);
     }
-
-    if (this.subItems[promptName]) {
-      Object.entries(this.subItems[promptName]).forEach(([key, value]) => {
-        this.items[key] = value;
-      });
-    }
+    this.curPrompt = promptName;
 
     this.preGenerateAndCacheVariables();
 
