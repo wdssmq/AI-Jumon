@@ -121,7 +121,7 @@ export class IndexParser {
       text = this.processVariables(text);
       text = this.generateText(text, maxDepth - 1);
     } else {
-      text = text.replace(/_null/g, ' ');
+      text = text.replace(/_null|-1/g, ' ');
       text = text.replace(/[，。]/g, ',');
       text = text.replace(/,[,\s]+/g, ', ');
       text = text.replace(/^[\s,]+/g, '').replace(/[\s,]+$/g, '');
