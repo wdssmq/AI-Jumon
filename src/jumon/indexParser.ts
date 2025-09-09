@@ -78,8 +78,8 @@ export class IndexParser {
     const ifPattern = /\{\{if\(([^?]+)\?([^:]+):([^)]+)\)\}\}/g;
     return text.replace(ifPattern, (_, condition: string, truePart: string, falsePart: string) => {
       const condVar = condition.trim();
-      const condValue = this.cachedValues[condVar] || '';
-      const bolCondValue = condValue !== '-1' && condValue !== '0' ? true : false;
+      const condValue = this.cachedValues[condVar];
+      const bolCondValue = condValue !== '-1' ? true : false;
 
       // console.log('>>', condVar, condValue, bolCondValue, truePart, falsePart);
       return bolCondValue ? truePart.trim() : falsePart.trim();
@@ -117,6 +117,10 @@ export class IndexParser {
 
     let text = this.processRandomSelection(template);
     text = this.processConditional(text);
+
+    if (text === '-1') {
+      return text;
+    }
 
     if (/\{\{[^}]+\}\}/.test(text)) {
       text = this.processVariables(text);
