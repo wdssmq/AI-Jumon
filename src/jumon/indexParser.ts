@@ -139,6 +139,12 @@ export class IndexParser {
     Object.keys(this.items).forEach((key) => {
       this.cachedValues[`$${key}`] = this.generateText(this.items[key]);
     });
+    // 如果变量有内部定义
+    if (this.curPrompt && this.subItems[this.curPrompt]) {
+      Object.keys(this.subItems[this.curPrompt]).forEach((key) => {
+        this.cachedValues[`$${key}`] = this.generateText(this.subItems[this.curPrompt][key]);
+      });
+    }
     // console.log('Cached Values:', this.cachedValues);
   }
 
