@@ -7,7 +7,12 @@ function goToAbout() {
 }
 </script>
 <template>
-  <h2>HomeView</h2>
+  <header class="flex items-center justify-between px-3">
+    <h2>HomeView</h2>
+    <div>
+      <button @click="goToAbout">Go to About</button>
+    </div>
+  </header>
   <JumonList />
-  <button class="btn-rt" @click="goToAbout">Go to About</button>
+
 </template>

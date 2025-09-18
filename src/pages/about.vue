@@ -37,8 +37,13 @@ RSS 订阅：[https://feed.wdssmq.com](https://feed.wdssmq.com "沉冰浮水博�
 const htmlContent = new MarkdownIt().render(mdContent);
 </script>
 <template>
-  <h2>AboutView</h2>
-  <button class="btn-rt" @click="goIndex">Go to Index</button>
+  <header class="flex items-center justify-between px-3">
+    <h2>AboutView</h2>
+    <div>
+      <button @click="goIndex">Go to Index</button>
+    </div>
+  </header>
+
   <p>存储路径: {{ storagePath }}</p>
   <div v-html="htmlContent"></div>
 </template>
