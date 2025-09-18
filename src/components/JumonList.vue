@@ -277,7 +277,7 @@ import {
 
     <!-- 变量列表 -->
     <details class="mb-4">
-      <summary class="cursor-pointer text-lg font-bold mb-2">变量列表
+      <summary class="cursor-pointer text-lg font-bold mb-2 ml-2">变量列表
         <button @click="showItemsEditor = true"
                 class="btn-def bg-purple-500 hover:bg-purple-600">编辑变量</button>
       </summary>
@@ -292,7 +292,7 @@ import {
     </details>
 
     <!-- 控制条 -->
-    <div class="flex gap-2 mb-4 pl-8">
+    <div class="flex gap-2 mb-4 ml-2">
       <!-- <button @click="generatePrompt(false)"
               class="btn-def bg-blue-500 hover:bg-blue-600">重新生成</button> -->
       <template v-if="!toDeletePrompt">
@@ -325,7 +325,7 @@ import {
 
     <!-- 提示词列表 -->
     <details open>
-      <summary class="cursor-pointer text-lg font-bold mb-2">提示词列表</summary>
+      <summary class="cursor-pointer text-lg font-bold mb-2 ml-2">提示词列表</summary>
       <ul v-if="IndexConfig && IndexConfig.prompts">
         <li v-for="(prompt, index) in IndexConfig.prompts"
             :key="index"
