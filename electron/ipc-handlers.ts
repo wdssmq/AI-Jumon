@@ -9,6 +9,11 @@ type objScopeType = {
   configDB: configDB;
 }
 
+type ResJson = {
+  success: boolean;
+  error: any;
+}
+
 export function setupIpcHandlers(win: Electron.BrowserWindow) {
 
   const objScope = {} as objScopeType;
@@ -33,6 +38,7 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
   // 监听来自渲染进程的 set-default-config 消息
   ipcMain.handle('set-default-config', async (_, configName) => {
     objScope.configDB.setDefaultConfig(configName);
+    return { success: true } as ResJson;
   });
 
   // 监听来自渲染进程的 get-prompts 消息
