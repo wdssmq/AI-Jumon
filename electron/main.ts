@@ -30,19 +30,20 @@ let win: BrowserWindow | null
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
   })
 
-  // 隐藏菜单
-  win.setMenu(null)
+  // // 移除菜单栏，会导致开发者工具无法打开
+  // win.setMenu(null)
+
+  // // 打开开发者工具
+  // VITE_DEV_SERVER_URL && win.webContents.openDevTools()
 
   // 最大化窗口
   win.maximize();
-
-  // 打开开发者工具
-  VITE_DEV_SERVER_URL && win.webContents.openDevTools()
 
   // 设置 IPC 处理程序
   setupIpcHandlers(win);
