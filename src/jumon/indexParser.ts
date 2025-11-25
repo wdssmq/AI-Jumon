@@ -1,19 +1,19 @@
 interface Item {
-  name: string;
-  content: string;
+  name: string
+  content: string
 }
 
 interface Prompt {
-  name: string;
-  desc?: string;
-  content: string;
-  items?: Item[];
-  [key: string]: any;
+  name: string
+  desc?: string
+  content: string
+  items?: Item[]
+  [key: string]: any
 }
 
 interface Config {
-  items: Item[];
-  prompts: Prompt[];
+  items: Item[]
+  prompts: Prompt[]
 }
 
 export class IndexParser {
@@ -23,7 +23,7 @@ export class IndexParser {
   private curPrompt: string = '';
   private cachedValues: Record<string, string> = {};
 
-  constructor (jsonData: string | Config) {
+  constructor(jsonData: string | Config) {
     this.loadConfig(jsonData);
   }
 
@@ -58,8 +58,8 @@ export class IndexParser {
           });
         });
       }
-
-    } catch (error: any) {
+    }
+    catch (error: any) {
       throw new Error(`Failed to load JSON data: ${error.message}`);
     }
   }
@@ -79,7 +79,7 @@ export class IndexParser {
     return text.replace(ifPattern, (_, condition: string, truePart: string, falsePart: string) => {
       const condVar = condition.trim();
       const condValue = this.cachedValues[condVar];
-      const bolCondValue = condValue !== '-1' ? true : false;
+      const bolCondValue = condValue !== '-1';
 
       // console.log('>>', condVar, condValue, bolCondValue, truePart, falsePart);
       return bolCondValue ? truePart.trim() : falsePart.trim();
@@ -125,7 +125,8 @@ export class IndexParser {
     if (/\{\{[^}]+\}\}/.test(text)) {
       text = this.processVariables(text);
       text = this.generateText(text, maxDepth - 1);
-    } else {
+    }
+    else {
       text = text.replace(/_null|-1/g, ' ');
       text = text.replace(/[，。]/g, ',');
       text = text.replace(/,[,\s]+/g, ', ');
@@ -172,4 +173,4 @@ export type {
   Config,
   Item,
   Prompt,
-}
+};

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, watch, defineEmits, computed, defineComponent, h, onBeforeMount } from 'vue';
-import { type Prompt } from '@/jumon/indexParser';
+import type { Prompt } from '@/jumon/indexParser';
+import { computed, defineComponent, h, onBeforeMount, ref, watch } from 'vue';
 
 const props = defineProps({
-  prompt: Object
+  prompt: Object,
 });
 
 const emit = defineEmits(['close', 'save']);
 
 const editedContent = ref(props.prompt?.content || '');
 const prompt = props.prompt as Prompt;
+console.log(prompt);
 
 // 一个对象列表，key 为 prompt 的其他属性名，value 记录是否开启此项的编辑
 const attributesEditState = ref<{ [key: string]: boolean }>({});
@@ -37,14 +38,23 @@ watch(
   (newPrompt) => {
     editedContent.value = newPrompt?.content || '';
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // 保存编辑内容
 function save() {
-  emit('save', "edit", { ...prompt, content: editedContent.value });
+  emit('save', 'edit', { ...prompt, content: editedContent.value });
   emit('close');
 }
+
+const isAnyEditing = computed(() => {
+  let rst = false;
+  Object.values(attributesEditState.value).forEach((v) => {
+    if (v)
+      rst = true;
+  });
+  return rst;
+});
 
 // 关闭弹窗
 function close() {
@@ -69,7 +79,8 @@ function addAttribute() {
     // 如果新属性值为空，默认开启编辑状态
     if (newAttributeValue.value === '') {
       attributesEditState.value[newAttributeKey.value] = true;
-    } else {
+    }
+    else {
       attributesEditState.value[newAttributeKey.value] = false;
     }
     newAttributeKey.value = '';
@@ -90,37 +101,29 @@ const otherAttributes = computed(() => {
   return Object.entries(prompt).filter(([key]) => !excludedKeys.includes(key));
 });
 
-const isAnyEditing = computed(() => {
-  let rst = false;
-  Object.values(attributesEditState.value).forEach(v => {
-    if (v) rst = true;
-  });
-  return rst;
-});
-
 // 判断属性是否被引用
-const isAttributeUsed = (key: string) => {
+function isAttributeUsed(key: string) {
   let rstCheck = false;
   if (editedContent.value.includes(`{{${key}}}`)) {
     rstCheck = true;
   }
-  rstCheck = rstCheck || otherAttributes.value.some(([_, val]) => {
+  rstCheck = rstCheck || otherAttributes.value.some(([_key, val]) => {
     return typeof val === 'string' && val.includes(`{{${key}}}`);
   });
   return rstCheck;
-};
+}
 
 // 封装一个通用的编辑按钮组件
 const EditButton = defineComponent({
   props: {
     isEditing: {
       type: Boolean,
-      required: true
+      required: true,
     },
     onToggle: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     return () => {
@@ -128,124 +131,174 @@ const EditButton = defineComponent({
         'button',
         {
           class: 'btn-def bg-gray-500 hover:bg-gray-600',
-          onClick: props.onToggle
+          onClick: props.onToggle,
         },
-        props.isEditing ? '锁定' : '编辑'
+        props.isEditing ? '锁定' : '编辑',
       );
     };
-  }
+  },
 });
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-       @click="close">
-    <div class="bg-white p-6 rounded shadow-lg w-1/2"
-         @click.stop>
-      <h2 class="text-lg font-bold mb-4">编辑提示词</h2>
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    @click="close"
+  >
+    <div
+      class="w-1/2 rounded bg-white p-6 shadow-lg"
+      @click.stop
+    >
+      <h2 class="mb-4 text-lg font-bold">
+        编辑提示词
+      </h2>
 
       <div class="mb-2 flex items-center gap-2">
         <strong>名称:</strong>
-        <input v-if="attributesEditState['name']"
-               v-model="prompt.name"
-               class="p-1 border rounded w73"
-               :name="prompt.name" />
-        <span v-else
-              class="w73">
+        <input
+          v-if="attributesEditState.name"
+          v-model="prompt.name"
+          class="w73 border rounded p-1"
+          :name="prompt.name"
+        >
+        <span
+          v-else
+          class="w73"
+        >
           {{ prompt.name }}
         </span>
-        <EditButton :isEditing="attributesEditState['name']"
-                    :onToggle="() => (attributesEditState['name'] = !attributesEditState['name'])" />
+        <EditButton
+          :is-editing="attributesEditState.name"
+          :on-toggle="() => (attributesEditState.name = !attributesEditState.name)"
+        />
       </div>
 
       <div class="mb-4 flex items-center gap-2">
         <strong>描述:</strong>
-        <input v-if="attributesEditState['desc']"
-               v-model="prompt.desc"
-               class="p-1 border rounded w73"
-               :name="prompt.name" />
-        <span v-else
-              class="w73">
+        <input
+          v-if="attributesEditState.desc"
+          v-model="prompt.desc"
+          class="w73 border rounded p-1"
+          :name="prompt.name"
+        >
+        <span
+          v-else
+          class="w73"
+        >
           {{ prompt.desc }}
         </span>
-        <EditButton :isEditing="attributesEditState['desc']"
-                    :onToggle="() => (attributesEditState['desc'] = !attributesEditState['desc'])" />
+        <EditButton
+          :is-editing="attributesEditState.desc"
+          :on-toggle="() => (attributesEditState.desc = !attributesEditState.desc)"
+        />
       </div>
 
       <!-- 主要内容编辑框 -->
-      <textarea v-model="editedContent"
-                @focus="attributesEditState['content'] = true"
-                @blur="attributesEditState['content'] = false"
-                rows="10"
-                class="w-full p-2 border rounded font-mono text-sm resize-none"></textarea>
+      <textarea
+        v-model="editedContent"
+        rows="10"
+        class="w-full resize-none border rounded p-2 text-sm font-mono"
+        @focus="attributesEditState.content = true"
+        @blur="attributesEditState.content = false"
+      />
 
       <!-- 新建属性 -->
-      <div class="flex  items-center gap-2 mt-2">
+      <div class="mt-2 flex items-center gap-2">
         <template v-if="showAddAttribute">
           <!-- 新建属性输入框 -->
-          <input v-model="newAttributeKey"
-                 placeholder="属性名"
-                 class="p-1 border rounded w-32" />
-          <input v-model="newAttributeValue"
-                 placeholder="属性值"
-                 class="p-1 border rounded w-64" />
-          <button class="btn-def bg-blue-500 hover:bg-blue-600"
-                  @click="addAttribute">
+          <input
+            v-model="newAttributeKey"
+            placeholder="属性名"
+            class="w-32 border rounded p-1"
+          >
+          <input
+            v-model="newAttributeValue"
+            placeholder="属性值"
+            class="w-64 border rounded p-1"
+          >
+          <button
+            class="btn-def bg-blue-500 hover:bg-blue-600"
+            @click="addAttribute"
+          >
             添加
           </button>
-          <button class="btn-def bg-red-500 hover:bg-red-600"
-                  @click="showAddAttribute = false">
+          <button
+            class="btn-def bg-red-500 hover:bg-red-600"
+            @click="showAddAttribute = false"
+          >
             取消
           </button>
         </template>
         <!-- 新建属性按钮 -->
-        <button v-else
-                class="btn-def bg-green-500 hover:bg-green-600"
-                @click="showAddAttribute = true">
+        <button
+          v-else
+          class="btn-def bg-green-500 hover:bg-green-600"
+          @click="showAddAttribute = true"
+        >
           新建属性
         </button>
       </div>
 
       <!-- 动态列出其他属性 -->
-      <div v-if="otherAttributes.length"
-           class="mt-4">
-        <div v-for="[key, value] in otherAttributes"
-             :key="key"
-             class="mb-1 flex items-center gap-2">
+      <div
+        v-if="otherAttributes.length"
+        class="mt-4"
+      >
+        <div
+          v-for="[key, value] in otherAttributes"
+          :key="key"
+          class="mb-1 flex items-center gap-2"
+        >
           <strong :class="!isAttributeUsed(key) ? 'text-blue-500 font-bold' : ''">{{ `\{\{${key}\}\}` }}</strong> ：
-          <textarea v-if="attributesEditState[key]"
-                    v-model="prompt[key]"
-                    class="p-2 border rounded font-mono w-137"
-                    :name="key"></textarea>
-          <span v-else
-                class="whitespace-nowrap overflow-clip text-ellipsis"
-                :class="prompt[key] === '' ? 'w-50' : 'w-137'">
+          <textarea
+            v-if="attributesEditState[key]"
+            v-model="prompt[key]"
+            class="w-137 border rounded p-2 font-mono"
+            :name="key"
+          />
+          <span
+            v-else
+            class="overflow-clip text-ellipsis whitespace-nowrap"
+            :class="prompt[key] === '' ? 'w-50' : 'w-137'"
+          >
             {{ value }}
           </span>
 
           <!-- 如果属性值为空，显示重命名和删除按钮 -->
           <template v-if="prompt[key] === ''">
             <!-- 删除按钮 -->
-            <button @click="deleteAttribute(key)"
-                    class="btn-def bg-red-500 hover:bg-red-600 ml-2">
+            <button
+              class="ml-2 btn-def bg-red-500 hover:bg-red-600"
+              @click="deleteAttribute(key)"
+            >
               删除
             </button>
           </template>
 
           <!-- 编辑按钮 -->
-          <EditButton :isEditing="attributesEditState[key]"
-                      :onToggle="() => (attributesEditState[key] = !attributesEditState[key])" />
+          <EditButton
+            :is-editing="attributesEditState[key]"
+            :on-toggle="() => (attributesEditState[key] = !attributesEditState[key])"
+          />
           <!-- >>循环结束 -->
         </div>
       </div>
 
       <!-- 操作按钮 -->
-      <div class="flex items-center justify-end gap-2 mt-4">
+      <div class="mt-4 flex items-center justify-end gap-2">
         <span>注：蓝色标记的属性为未使用状态；</span>
-        <button @click="close"
-                class="btn-def bg-gray-500 hover:bg-gray-600">取消</button>
-        <button @click="save"
-                class="btn-def bg-blue-500 hover:bg-blue-600">保存</button>
+        <button
+          class="btn-def bg-gray-500 hover:bg-gray-600"
+          @click="close"
+        >
+          取消
+        </button>
+        <button
+          class="btn-def bg-blue-500 hover:bg-blue-600"
+          @click="save"
+        >
+          保存
+        </button>
       </div>
     </div>
   </div>

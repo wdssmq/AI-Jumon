@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import path from 'node:path'
-import electron from 'vite-plugin-electron/simple'
-import vue from '@vitejs/plugin-vue'
-import pkg from './package.json'
-import UnoCSS from 'unocss/vite'
+import path from 'node:path';
+import vue from '@vitejs/plugin-vue';
+import UnoCSS from 'unocss/vite';
+import { defineConfig } from 'vite';
+import electron from 'vite-plugin-electron/simple';
+import pkg from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,10 +17,11 @@ export default defineConfig({
         onstart({ startup }) {
           // 使用 VSCode 调试时, Vite 将只编译不启动 Electron，由 launch.json 负责；
           if (process.env.VSCODE_DEBUG) {
-            console.log(/* 为 VSCode 任务输出识别字串 */'[startup] Electron App')
-          } else {
+            console.log(/* 为 VSCode 任务输出识别字串 */'[startup] Electron App');
+          }
+          else {
             // 直接使用 `vite` 启动时，编译完成后启动 Electron；
-            startup()
+            startup();
           }
         },
       },
@@ -40,11 +41,11 @@ export default defineConfig({
   ],
   server: process.env.VSCODE_DEBUG
     ? (() => {
-        const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
+        const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL);
         return {
           host: url.hostname,
           port: +url.port,
-        }
+        };
       })()
     : undefined,
   resolve: {
@@ -52,4 +53,4 @@ export default defineConfig({
       '@': path.join(__dirname, 'src'),
     },
   },
-})
+});

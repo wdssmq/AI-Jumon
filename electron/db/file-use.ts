@@ -1,28 +1,28 @@
-import FileDB from "./file";
+import path from 'node:path';
 import {
-  dirExists,
-  fileExists,
   createDir,
-  parseYAML,
+  dirExists,
   dumpYAML,
+  fileExists,
   getLocalTime,
-} from "../utils/base";
-import path from 'node:path'
+  parseYAML,
+} from '../utils/base';
+import FileDB from './file';
 
-type curConfig = {
-  name: string;
-  path: string;
-  db?: FileDB;
+interface curConfig {
+  name: string
+  path: string
+  db?: FileDB
 }
 
-type configList = {
-  name: string;
-  path: string;
-  db?: FileDB;
-  data?: Record<string, any>;
+interface configList {
+  name: string
+  path: string
+  db?: FileDB
+  data?: Record<string, any>
 }
 
-export class configDB {
+export class ConfigDB {
   private configDir: string;
   // ts-ignore
   private curConfig: curConfig = { name: '', path: '' };
@@ -33,18 +33,19 @@ export class configDB {
   get list() {
     return this.configList.data?.list || [];
   }
+
   get default() {
     return this.configList.data?.default || '';
   }
 
-  constructor (objScope: Record<string, any> = {}, configName: string = '') {
+  constructor(objScope: Record<string, any> = {}, configName: string = '') {
     // 配置文件目录
     this.configDir = objScope.StoragePath;
 
     // 初始化配置目录
     this.init().then(() => {
       console.log('Config directory initialized at:', this.configDir);
-    }).catch(err => {
+    }).catch((err) => {
       console.error('Error initializing config directory:', err);
     });
 
@@ -54,10 +55,9 @@ export class configDB {
       path: path.join(this.configDir, 'config-list.json'),
     };
 
-    const _this = this;
     this.loadList().then((defaultConfig) => {
       //  载入预定的配置文件
-      _this.switchConfig(configName || defaultConfig);
+      this.switchConfig(configName || defaultConfig);
     });
   }
 
@@ -84,10 +84,9 @@ export class configDB {
     await db!.write(JSON.stringify(this.configList.data));
   }
 
-
   setDefaultConfig(name: string): void {
     const newName = name || this.curConfig.name;
-    const curDefName = this.default
+    const curDefName = this.default;
     if (newName === curDefName || !this.list.includes(newName)) {
       return;
     }
@@ -96,7 +95,7 @@ export class configDB {
   }
 
   switchConfig(name: string): void {
-    const configName = name.replace(/\.ya?ml$/i, '') + '.yaml';
+    const configName = `${name.replace(/\.ya?ml$/i, '')}.yaml`;
     this.curConfig = {
       name: configName,
       path: path.join(this.configDir, configName),

@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { IndexParser } from '../src/jumon/indexParser';
 
-const doM = (i: number, fn: Function) => {
+function doM(i: number, fn: (j: number) => void) {
   for (let j = 0; j < i; j++) {
     fn(j);
   }
-};
+}
 
-describe('IndexParser', () => {
+describe('indexParser', () => {
   const jsonData = JSON.stringify(
     {
       items: [
@@ -26,17 +26,17 @@ describe('IndexParser', () => {
     },
   );
 
-  it('should generate the correct prompt', () => {
+  it('should generate the correct prompt for demo', () => {
     const parser = new IndexParser(jsonData);
     const result = parser.generatePrompt('demo');
     expect(result).toMatch(/女性, 二次元少女, 坐在椅子上, 桌子上有(猫|兔子), 沙发上有(猫|兔子)/);
   });
 
-  it('should generate the correct prompt', () => {
+  it('should generate the correct prompt for demo2', () => {
     const parser = new IndexParser(jsonData);
     doM(20, () => {
       const result = parser.generatePrompt('demo2');
-      expect(result).toBeOneOf(['女性, 二次元少女, 坐在椅子上', '女性, 二次元少女, 坐在椅子上, 窗外有蓝天白云' ]);
+      expect(result).toBeOneOf(['女性, 二次元少女, 坐在椅子上', '女性, 二次元少女, 坐在椅子上, 窗外有蓝天白云']);
     });
   });
 
@@ -47,8 +47,6 @@ describe('IndexParser', () => {
       console.log(result);
     });
   });
-
-
 
   it('should list all prompts', () => {
     const parser = new IndexParser(jsonData);

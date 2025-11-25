@@ -1,12 +1,13 @@
-import { createApp } from 'vue'
-import './style.css'
-import 'virtual:uno.css'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import './style.css';
+import 'virtual:uno.css';
 
 createApp(App)
-.mount('#app').$nextTick(() => {
+  .mount('#app')
+  .$nextTick(() => {
   // Use contextBridge
-  window.ipcRenderer.on('main-process-message', (_event, message) => {
-    console.log(message)
-  })
-})
+    window.ipcRenderer.on('main-process-message', (_event, message) => {
+      console.log(message);
+    });
+  });

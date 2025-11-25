@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 
 const storagePath = ref('');
-const fetchStoragePath = async () => {
+async function fetchStoragePath() {
   const path = await window.ipcRenderer.invoke('get-storage-path');
   storagePath.value = path;
 }

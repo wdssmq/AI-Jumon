@@ -1,20 +1,20 @@
-export const fetchData = async (invoke: string, params: any) => {
+export async function fetchData(invoke: string, params: any) {
   try {
-    // @ts-ignore
     const result = await window.ipcRenderer.invoke(invoke, params);
     return result;
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to fetch data:', error);
     return null;
   }
 }
 
-export const postData = async (invoke: string, params: any) => {
+export async function postData(invoke: string, params: any) {
   try {
-    // @ts-ignore
     const result = await window.ipcRenderer.invoke(invoke, params);
     return result;
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to post data:', error);
     return null;
   }
