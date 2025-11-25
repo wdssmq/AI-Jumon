@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import MainPage from '@/pages/MainPage.vue'
 </script>
 
 <template>
-  <main>
-    <RouterView />
+  <main class="h-screen">
+    <MainPage />
   </main>
 </template>
 
