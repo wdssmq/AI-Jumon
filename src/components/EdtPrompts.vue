@@ -10,7 +10,6 @@ const emit = defineEmits(['close', 'save']);
 
 const editedContent = ref(props.prompt?.content || '');
 const prompt = props.prompt as Prompt;
-console.log(prompt);
 
 // 一个对象列表，key 为 prompt 的其他属性名，value 记录是否开启此项的编辑
 const attributesEditState = ref<{ [key: string]: boolean }>({});
