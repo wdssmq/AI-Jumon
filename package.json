@@ -1,12 +1,15 @@
 {
   "name": "ai-jumon",
-  "private": true,
-  "version": "1.0.1-beta",
   "type": "module",
+  "version": "1.0.1-beta",
+  "private": true,
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build && electron-builder",
     "preview": "vite preview",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "set-tag": "node -e \"const v=require('./package.json').version;require('child_process').execSync('git tag v'+v);console.log('Created tag: v'+v);\" && git tag",
     "push-tag": "node -e \"const v=require('./package.json').version;require('child_process').execSync('git push origin v'+v);\""
   },
@@ -21,11 +24,14 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^6.2.0",
     "@types/js-yaml": "^4.0.9",
     "@types/markdown-it": "^14.1.2",
+    "@unocss/eslint-plugin": "^66.5.4",
     "@vitejs/plugin-vue": "^5.2.4",
     "electron": "^30.5.1",
     "electron-builder": "^24.13.3",
+    "eslint": "^9.38.0",
     "js-yaml": "^4.1.0",
     "naive-ui": "^2.43.1",
     "typescript": "^5.9.2",
@@ -35,6 +41,5 @@
     "vite-plugin-electron-renderer": "^0.14.6",
     "vitest": "^3.2.4",
     "vue-tsc": "^2.2.12"
-  },
-  "main": "dist-electron/main.js"
+  }
 }
