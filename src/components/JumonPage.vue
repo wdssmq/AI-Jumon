@@ -107,9 +107,14 @@ function generatePrompt(runSort: boolean = false) {
 }
 
 // 复制
-function copyPrompt(prompt: Prompt) {
+async function copyPrompt(prompt: Prompt) {
   if (prompt.result) {
-    navigator.clipboard.writeText(prompt.result);
+    try {
+      await navigator.clipboard.writeText(prompt.result);
+    }
+    catch (error) {
+      console.error('Failed to copy text: ', error);
+    }
   }
 }
 
@@ -387,7 +392,7 @@ const drawerTitle = ref('变量列表');
                 <template #trigger>
                   <button
                     class="btn-def bg-green-500 hover:bg-green-600"
-                    @click="copyPrompt(prompt.result)"
+                    @click="copyPrompt(prompt)"
                   >
                     复制结果
                   </button>
