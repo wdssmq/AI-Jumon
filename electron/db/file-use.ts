@@ -157,16 +157,16 @@ export class ConfigDB {
     const backupFilePath = path.join(backupDir, backupFile);
     if (await fileExists(backupFilePath)) {
       // 已存在同名备份文件，返回提示信息
-      return `已经存在同名备份文件: ${backupFilePath}`;
+      return `Backup file already exists: ${backupFilePath}`;
     }
     // 读取当前配置文件内容，写入备份文件
     const db = this.curConfig.db;
     const content = await db!.read();
     if (!db?.isExists) {
-      return `待备份文件不存在：${this.curConfig.path}`;
+      return `File to backup does not exist: ${this.curConfig.path}`;
     }
     const backupDb = new FileDB(backupFilePath);
     await backupDb.write(content);
-    return `备份完成: ${backupFilePath}`;
+    return `Backup completed: ${backupFilePath}`;
   }
 }
