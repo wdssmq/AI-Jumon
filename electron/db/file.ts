@@ -44,6 +44,20 @@ class FileDB {
       throw error;
     }
   }
+
+  async delete(): Promise<void> {
+    const exists = await this.checkExists();
+    if (!exists) {
+      return;
+    }
+    try {
+      await fs.unlink(this.filePath);
+    }
+    catch (error) {
+      console.error('Error deleting file:', error);
+      throw error;
+    }
+  }
 }
 
 export default FileDB;

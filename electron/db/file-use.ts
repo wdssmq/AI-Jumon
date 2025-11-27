@@ -23,10 +23,11 @@ interface configList {
 }
 
 export class ConfigDB {
+  // 文件夹路径
   private configDir: string;
-  // ts-ignore
+  // 当前配置文件
   private curConfig: curConfig = { name: '', path: '' };
-
+  // 列表数据
   public configList: configList;
 
   // 读取配置列表及默认配置
@@ -108,6 +109,26 @@ export class ConfigDB {
     }).catch((err: any) => {
       console.error('Error during auto backup:', err);
     });
+  }
+
+  addConfig(name: string): void {
+    if (this.list.includes(name)) {
+      return;
+    }
+    this.configList.data!.list.push(name);
+    this.saveList();
+  }
+
+  deleteConfig(name: string): void {
+    if (!this.list.includes(name)) {
+      return;
+    }
+    this.configList.data!.list = this.list.filter((item: string) => item !== name);
+    this.saveList();
+    // 尝试删除对应的文件
+    const filePath = path.join(this.configDir, `${name}.yaml`);
+    const fileDB = new FileDB(filePath);
+    fileDB.delete();
   }
 
   async getCurData(): Promise<curConfig> {

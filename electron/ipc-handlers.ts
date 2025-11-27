@@ -40,6 +40,18 @@ export function setupIpcHandlers(win: Electron.BrowserWindow) {
     return { success: true } as ResJson;
   });
 
+  // 监听来自渲染进程的 add-config 消息
+  ipcMain.handle('add-config', async (_, configName) => {
+    objScope.ConfigDB.addConfig(configName);
+    return { success: true } as ResJson;
+  });
+
+  // 监听来自渲染进程的 delete-config 消息
+  ipcMain.handle('delete-config', async (_, configName) => {
+    objScope.ConfigDB.deleteConfig(configName);
+    return { success: true } as ResJson;
+  });
+
   // 监听来自渲染进程的 get-prompts 消息
   ipcMain.handle('get-prompts', async (_, configName = '') => {
     if (configName) {
