@@ -13,7 +13,7 @@ const currentView = ref('jumon');
 // 菜单选项
 const menuOptions = computed(() => [
   {
-    label: 'jumon',
+    label: 'Jumon',
     key: 'jumon',
     icon: renderIcon('jumon'),
   },

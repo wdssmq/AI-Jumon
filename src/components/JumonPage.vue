@@ -148,6 +148,47 @@ function setDefConfig() {
   });
 }
 
+// 添加配置
+const toAddConfig = ref(false);
+const configNameToAdd = ref('');
+function addConfig() {
+  if (!configNameToAdd.value)
+    return;
+  postData('add-config', configNameToAdd.value).then((res) => {
+    console.log('Add Config:', res);
+    toAddConfig.value = false;
+    fetchConfigs();
+    setTimeout(() => {
+      selectedConfig.value = configNameToAdd.value;
+      configNameToAdd.value = '';
+    }, 500);
+  });
+}
+
+// 删除配置
+const toDeleteConfig = ref(false);
+const configNameToDelete = ref('');
+function deleteConfig() {
+  const name = configNameToDelete.value;
+  // 不能删除默认配置
+  if (!name || name === configList.value.default)
+    return;
+  // 判断是否存在于列表中
+  if (!configList.value.list.includes(name))
+    return;
+  // 如果删除的是当前配置，则切换到默认配置
+  if (name === selectedConfig.value)
+    selectedConfig.value = configList.value.default;
+  postData('delete-config', name).then((res) => {
+    console.log('Delete Config:', res);
+    fetchConfigs();
+    setTimeout(() => {
+      toDeleteConfig.value = false;
+      configNameToDelete.value = '';
+    }, 500);
+  });
+}
+
 // -----------------------------------------------------------------------
 
 // 编辑全局变量
@@ -246,22 +287,90 @@ const drawerTitle = ref('变量列表');
 <template>
   <NLayout content-class="px-3">
     <!-- 配置切换 -->
-    <div class="mb-2 flex items-center justify-end gap-2 bg-gray-100">
+    <div class="mb-2 mr-8 flex items-center justify-end gap-3 bg-gray-100">
+      <!-- 删除 -->
+      <button
+        v-if="!toDeleteConfig && !toAddConfig"
+        class="btn-def bg-red-500 hover:bg-red-600"
+        @click="toDeleteConfig = true"
+      >
+        删除配置项
+      </button>
+      <template v-if="toDeleteConfig">
+        <label
+          class="text-red-700 font-bold"
+          for="toDeleteConfig"
+        >删除配置：</label>
+        <input
+          v-model="configNameToDelete"
+          type="text"
+          class="input-def"
+          placeholder="请输入要删除的配置项"
+        >
+        <button
+          class="btn-def bg-red-500 hover:bg-red-600"
+          @click="deleteConfig()"
+        >
+          确认
+        </button>
+        <button
+          class="btn-def bg-gray-500 hover:bg-gray-600"
+          @click="toDeleteConfig = false"
+        >
+          取消
+        </button>
+      </template>
+      <!-- 添加 -->
+      <button
+        v-if="!toAddConfig && !toDeleteConfig"
+        class="btn-def bg-blue-500 hover:bg-blue-600"
+        @click="toAddConfig = true"
+      >
+        添加配置项
+      </button>
+      <template v-if="toAddConfig">
+        <label
+          class="text-blue-700 font-bold"
+          for="toAddConfig"
+        >新增配置：</label>
+        <input
+          v-model="configNameToAdd"
+          type="text"
+          class="input-def"
+          placeholder="请输入新增配置项名称"
+        >
+        <button
+          class="btn-def bg-blue-500 hover:bg-blue-600"
+          @click="addConfig"
+        >
+          确认
+        </button>
+        <button
+          class="btn-def bg-gray-500 hover:bg-gray-600"
+          @click="toAddConfig = false"
+        >
+          取消
+        </button>
+      </template>
       <!-- checkbox 项 -->
       <div
         v-if="selectedConfig !== configList?.default"
-        class="mr-4 flex items-center gap-2"
+        class="flex items-center gap-2"
       >
         <template v-if="!toChangeDef">
-          <label class="text-sm">设为默认
+          <label
+            class="flex items-center text-sm"
+            for="toChangeDef"
+          >设为默认：
             <input
               type="checkbox"
+              name="toChangeDef"
               @change="toChangeDef = true"
             >
           </label>
         </template>
         <template v-else>
-          <span class="text-sm font-bold">再次确认</span>
+          <span class="text-sm font-bold">再次确认：</span>
           <button
             type="button"
             class="btn-def rounded bg-gray-600 px-2 py-1 text-sm hover:bg-gray-500"
@@ -280,12 +389,12 @@ const drawerTitle = ref('变量列表');
       </div>
       <label
         for="configSelect"
-        class="mr-2 font-bold"
+        class="mr-1 font-bold"
       >配置切换:</label>
       <select
         id="configSelect"
         v-model="selectedConfig"
-        class="mr-8 input-def"
+        class="input-def"
       >
         <option
           v-for="config in configList?.list"
@@ -386,9 +495,7 @@ const drawerTitle = ref('变量列表');
                 重新生成
               </button>
               <!-- 复制 -->
-              <NPopover
-                trigger="click"
-              >
+              <NPopover trigger="click">
                 <template #trigger>
                   <button
                     class="btn-def bg-green-500 hover:bg-green-600"
