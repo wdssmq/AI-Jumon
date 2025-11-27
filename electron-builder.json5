@@ -7,6 +7,12 @@
   "directories": {
     "output": "release/${version}"
   },
+  "publish": {
+    "provider": "github",
+    "owner": "wdssmq",
+    "repo": "AI-Jumon",
+    "releaseType": "draft"
+  },
   "files": [
     "dist",
     "dist-electron"

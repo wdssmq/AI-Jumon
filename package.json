@@ -1,7 +1,7 @@
 {
   "name": "ai-jumon",
   "type": "module",
-  "version": "1.0.1-beta",
+  "version": "1.0.2-beta",
   "private": true,
   "main": "dist-electron/main.js",
   "scripts": {
@@ -10,8 +10,10 @@
     "preview": "vite preview",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "set-tag": "node -e \"const v=require('./package.json').version;require('child_process').execSync('git tag v'+v);console.log('Created tag: v'+v);\" && git tag",
-    "push-tag": "node -e \"const v=require('./package.json').version;require('child_process').execSync('git push origin v'+v);\""
+    "pregh:pub": "git diff --quiet && git diff --cached --quiet || (git add -A && git commit -m \"publish\" && git push)",
+    "tag:set": "node -e \"const v=require('./package.json').version;require('child_process').execSync('git tag v'+v);console.log('Created tag: v'+v);\" && git tag",
+    "tag:push": "node -e \"const v=require('./package.json').version;require('child_process').execSync('git push origin v'+v);\"",
+    "gh:pub": "pnpm tag:set && pnpm tag:push"
   },
   "debug": {
     "env": {
