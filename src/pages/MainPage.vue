@@ -59,7 +59,7 @@ function handleMenuSelect(key: string) {
           strong
           class="text-base"
         >
-          Main Page
+          AI Jumon
         </NText>
       </NFlex>
       <NMenu

@@ -32,15 +32,15 @@ const trimmedItems = computed(() =>
 
 const duplicateNames = computed(() => {
   const seen = new Set<string>();
-  const dups = new Set<string>();
+  const dup = new Set<string>();
   for (const it of trimmedItems.value) {
     if (!it.name)
       continue;
     if (seen.has(it.name))
-      dups.add(it.name);
+      dup.add(it.name);
     else seen.add(it.name);
   }
-  return dups;
+  return dup;
 });
 
 const hasError = computed(() => {
