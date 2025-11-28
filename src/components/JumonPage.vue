@@ -290,7 +290,7 @@ const drawerTitle = ref('变量列表');
     <div class="mb-2 mr-8 flex items-center justify-end gap-3 bg-gray-100">
       <!-- 删除 -->
       <button
-        v-if="!toDeleteConfig && !toAddConfig"
+        v-if="!toDeleteConfig && !toAddConfig && !toChangeDef"
         class="btn-def bg-red-500 hover:bg-red-600"
         @click="toDeleteConfig = true"
       >
@@ -322,7 +322,7 @@ const drawerTitle = ref('变量列表');
       </template>
       <!-- 添加 -->
       <button
-        v-if="!toAddConfig && !toDeleteConfig"
+        v-if="!toAddConfig && !toDeleteConfig && !toChangeDef"
         class="btn-def bg-blue-500 hover:bg-blue-600"
         @click="toAddConfig = true"
       >
@@ -359,7 +359,7 @@ const drawerTitle = ref('变量列表');
       >
         <template v-if="!toChangeDef">
           <label
-            class="flex items-center text-sm"
+            class="flex items-center font-bold"
             for="toChangeDef"
           >设为默认：
             <input
@@ -390,6 +390,7 @@ const drawerTitle = ref('变量列表');
       <label
         for="configSelect"
         class="mr-1 font-bold"
+        :class="{ hidden: selectedConfig !== configList?.default }"
       >配置切换:</label>
       <select
         id="configSelect"
@@ -542,8 +543,8 @@ const drawerTitle = ref('变量列表');
         </button>
       </NLayout>
       <NCollapse
-        :default-expanded-names="['1']"
         :trigger-areas="['arrow', 'extra']"
+        :default-expanded-names="curIndex.items.map((_, index) => index)"
       >
         <NCollapseItem
           v-for="(item, index) in curIndex.items"

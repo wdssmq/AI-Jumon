@@ -154,7 +154,7 @@ export class ConfigDB {
   - name: demo
     desc: 示例
     content: |
-      {{base}}，坐在椅子上，{{头发}}, {{动物}}
+      {{base}}, 坐在椅子上, {{头发}}, {{动物}}
       `;
     }
     const db = this.curConfig.db;

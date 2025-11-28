@@ -76,7 +76,7 @@ function save() {
     >
       <div class="flex items-center justify-between gap-3">
         <h2 class="mb-4 text-lg font-bold">
-          编辑变量 Items
+          编辑变量
         </h2>
         <button
           class="mr-4 btn-def bg-green-500 hover:bg-green-600"
