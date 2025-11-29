@@ -74,7 +74,7 @@ function preProcessResult(result: Config[] | Config) {
   }
   // 2025-11-29
   indexData.prompts.map((prompt) => {
-    prompt.order = Object.hasOwn(prompt, 'sort') ? prompt.order : Number.parseInt(prompt.name.replace(/\D/g, ''));
+    prompt.order = Object.hasOwn(prompt, 'order') ? prompt.order : Number.parseInt(prompt.name.replace(/\D/g, ''));
     return prompt;
   });
   return indexData;
