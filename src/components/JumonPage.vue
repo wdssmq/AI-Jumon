@@ -264,11 +264,11 @@ function savePrompts(type: SavePromptsType, args: Prompt) {
     console.log('Deleted Prompt:', args.name);
   }
 
-  changeSort('name');
+  // changeSort('name');
 
   // 深拷贝并移除 prompts 中的 result 字段
   const plainData = JSON.parse(JSON.stringify(curIndex.value));
-  plainData.prompts?.forEach((p: Prompt) => delete p.result);
+  plainData.prompts!.forEach((p: Prompt) => delete p.result);
   // 保存数据
   postData('save-prompts', plainData).then((res) => {
     console.log(res);
