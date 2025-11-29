@@ -5,7 +5,7 @@ interface Item {
 
 interface Prompt {
   name: string
-  desc?: string
+  desc: string
   order: number
   content: string
   items?: Item[]

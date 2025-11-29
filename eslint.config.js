@@ -11,5 +11,6 @@ export default antfu({
     'unused-imports/no-unused-vars': ['error', { vars: 'all', varsIgnorePattern: '^_', args: 'all', argsIgnorePattern: '^_' }],
     'unused-imports/no-unused-imports': ['error', { vars: 'all', varsIgnorePattern: '^_' }],
     'node/prefer-global/process': ['off'],
+    'vue/one-component-per-file': ['off'],
   },
 });

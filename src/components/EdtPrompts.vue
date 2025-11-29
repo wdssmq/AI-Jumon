@@ -94,9 +94,10 @@ function deleteAttribute(key: string) {
   delete attributesEditState.value[key];
 }
 
-// 获取其他属性（排除 name, desc, content）
+// 固有属性外的其他属性
 const otherAttributes = computed(() => {
-  const excludedKeys = ['name', 'desc', 'content', 'result'];
+  const excludedKeys = ['name', 'desc', 'content', 'result', 'order'];
+  // TODO 返回内容需要改为对象
   return Object.entries(prompt).filter(([key]) => !excludedKeys.includes(key));
 });
 
@@ -137,6 +138,50 @@ const EditButton = defineComponent({
     };
   },
 });
+
+// 固有属性编辑组件
+const AttributeEditor = defineComponent({
+  props: {
+    label: {
+      type: String,
+      required: true,
+    },
+    modelValue: {
+      type: String,
+      required: true,
+    },
+    isEditing: {
+      type: Boolean,
+      required: true,
+    },
+    onToggle: {
+      type: Function,
+      required: true,
+    },
+    onUpdate: {
+      type: Function,
+      required: true,
+    },
+  },
+  setup(props) {
+    return () => {
+      return h('div', { class: 'mb-2 flex items-center gap-2' }, [
+        h('strong', {}, props.label),
+        props.isEditing
+          ? h('input', {
+              value: props.modelValue,
+              class: 'w73 border rounded p-1',
+              onInput: (e: Event) => props.onUpdate((e.target as HTMLInputElement).value),
+            })
+          : h('span', { class: 'w73' }, props.modelValue),
+        h(EditButton, {
+          isEditing: props.isEditing,
+          onToggle: props.onToggle,
+        }),
+      ]);
+    };
+  },
+});
 </script>
 
 <template>
@@ -152,45 +197,29 @@ const EditButton = defineComponent({
         编辑提示词
       </h2>
 
-      <div class="mb-2 flex items-center gap-2">
-        <strong>名称:</strong>
-        <input
-          v-if="attributesEditState.name"
-          v-model="prompt.name"
-          class="w73 border rounded p-1"
-          :name="prompt.name"
-        >
-        <span
-          v-else
-          class="w73"
-        >
-          {{ prompt.name }}
-        </span>
-        <EditButton
-          :is-editing="attributesEditState.name"
-          :on-toggle="() => (attributesEditState.name = !attributesEditState.name)"
-        />
-      </div>
+      <AttributeEditor
+        label="名称"
+        :on-update="(val: string) => prompt.name = val"
+        :on-toggle="() => attributesEditState.name = !attributesEditState.name"
+        :model-value="prompt.name"
+        :is-editing="attributesEditState.name"
+      />
 
-      <div class="mb-4 flex items-center gap-2">
-        <strong>描述:</strong>
-        <input
-          v-if="attributesEditState.desc"
-          v-model="prompt.desc"
-          class="w73 border rounded p-1"
-          :name="prompt.name"
-        >
-        <span
-          v-else
-          class="w73"
-        >
-          {{ prompt.desc }}
-        </span>
-        <EditButton
-          :is-editing="attributesEditState.desc"
-          :on-toggle="() => (attributesEditState.desc = !attributesEditState.desc)"
-        />
-      </div>
+      <AttributeEditor
+        label="描述"
+        :on-update="(val: string) => prompt.desc = val"
+        :on-toggle="() => attributesEditState.desc = !attributesEditState.desc"
+        :model-value="prompt.desc"
+        :is-editing="attributesEditState.desc"
+      />
+
+      <AttributeEditor
+        label="排序"
+        :on-update="(val: string) => prompt.order = Number(val)"
+        :on-toggle="() => attributesEditState.order = !attributesEditState.order"
+        :model-value="prompt.order.toString()"
+        :is-editing="attributesEditState.order"
+      />
 
       <!-- 主要内容编辑框 -->
       <textarea
