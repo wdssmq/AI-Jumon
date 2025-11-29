@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Prompt } from '@/jumon/indexParser';
 import { computed, defineComponent, h, onBeforeMount, ref, watch } from 'vue';
+import { getTime } from '@/base/tools.ts';
 
 const props = defineProps({
   prompt: Object,
@@ -42,6 +43,7 @@ watch(
 
 // 保存编辑内容
 function save() {
+  prompt.update = getTime();
   emit('save', 'edit', { ...prompt, content: editedContent.value });
   emit('close');
 }
@@ -96,7 +98,7 @@ function deleteAttribute(key: string) {
 
 // 固有属性外的其他属性
 const otherAttributes = computed(() => {
-  const excludedKeys = ['name', 'desc', 'content', 'result', 'order'];
+  const excludedKeys = ['name', 'desc', 'content', 'result', 'order', 'update'];
   // TODO 返回内容需要改为对象
   return Object.entries(prompt).filter(([key]) => !excludedKeys.includes(key));
 });
