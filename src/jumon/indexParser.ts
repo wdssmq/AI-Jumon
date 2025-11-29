@@ -6,8 +6,10 @@ interface Item {
 interface Prompt {
   name: string
   desc?: string
+  order: number
   content: string
   items?: Item[]
+  update?: number
   [key: string]: any
 }
 
@@ -15,6 +17,8 @@ interface Config {
   items: Item[]
   prompts: Prompt[]
 }
+
+const PROMPT_FIXED_KEYS = ['name', 'desc', 'order', 'content', 'items', 'update'];
 
 export class IndexParser {
   private items: Record<string, string> = {};
@@ -46,14 +50,14 @@ export class IndexParser {
           if (prompt.items) {
             this.subItems[promptName] = this.subItems[promptName] || {};
             prompt.items.forEach((item) => {
-              this.subItems[promptName][item.name] = item.content.trim();
+              this.subItems[promptName][item.name] = item.content.toString().trim();
             });
           }
           // 内部属性 - 形式二
           Object.keys(prompt).forEach((key) => {
-            if (key !== 'name' && key !== 'content' && key !== 'items' && key !== 'desc') {
+            if (!PROMPT_FIXED_KEYS.includes(key)) {
               this.subItems[promptName] = this.subItems[promptName] || {};
-              this.subItems[promptName][key] = prompt[key].trim();
+              this.subItems[promptName][key] = prompt[key].toString().trim();
             }
           });
         });
