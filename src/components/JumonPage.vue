@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { Config, Item, Prompt } from '@/jumon/indexParser';
+import type {
+  Config,
+  Item,
+  Prompt,
+} from '@/jumon/indexParser';
 import {
   NCollapse,
   NCollapseItem,
@@ -16,9 +20,7 @@ import { fetchData, postData } from '@/base/invoke';
 import EdtItems from '@/components/EdtItems.vue';
 import EdtPrompts from '@/components/EdtPrompts.vue';
 import {
-
   IndexParser,
-
 } from '@/jumon/indexParser';
 
 const configList = ref<Record<string, any>>({});
@@ -89,10 +91,10 @@ function changeSort(to = '') {
   }
 
   if (sortType.value === 'rnd') {
-    curIndex.value.prompts?.sort(() => Math.random() - 0.5);
+    curIndex.value.prompts.sort(() => Math.random() - 0.5);
   }
   else {
-    curIndex.value.prompts?.sort((a, b) => a.order > b.order ? 1 : -1);
+    curIndex.value.prompts.sort((a, b) => a.order > b.order ? 1 : -1);
   }
 }
 
@@ -103,7 +105,7 @@ function generatePrompt(runSort: boolean = false) {
   if (runSort) {
     changeSort();
   }
-  curIndex.value.prompts?.forEach((prompt) => {
+  curIndex.value.prompts.forEach((prompt) => {
     const generated = IndexProject.generatePrompt(prompt.name);
     // console.log('Generated Prompt:', generated);
     prompt.result = generated;
@@ -203,7 +205,7 @@ function saveItems(items: Item[]) {
   curIndex.value.items = items;
   // 深拷贝并移除 prompts 中的 result 字段
   const plainData = JSON.parse(JSON.stringify(curIndex.value));
-  plainData.prompts?.forEach((p: Prompt) => delete p.result);
+  plainData.forEach((p: Prompt) => delete p.result);
   // 保存数据
   postData('save-prompts', plainData).then((res) => {
     console.log(res);
