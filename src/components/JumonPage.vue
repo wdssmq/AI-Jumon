@@ -70,14 +70,19 @@ function preProcessResult(result: Config[] | Config) {
       }
     });
   }
+  // 2025-11-29
+  indexData.prompts.map((prompt) => {
+    prompt.order = Object.hasOwn(prompt, 'sort') ? prompt.order : Number.parseInt(prompt.name.replace(/\D/g, ''));
+    return prompt;
+  });
   return indexData;
 }
 
 // 排序修改
-const sortType = ref<'name' | 'rnd'>('name');
+const sortType = ref<'order' | 'rnd'>('order');
 function changeSort(to = '') {
-  if (sortType.value === 'rnd' || to === 'name') {
-    sortType.value = 'name';
+  if (sortType.value === 'rnd' || to === 'order') {
+    sortType.value = 'order';
   }
   else {
     sortType.value = 'rnd';
@@ -87,7 +92,7 @@ function changeSort(to = '') {
     curIndex.value.prompts?.sort(() => Math.random() - 0.5);
   }
   else {
-    curIndex.value.prompts?.sort((a, b) => a.name.localeCompare(b.name));
+    curIndex.value.prompts?.sort((a, b) => a.order > b.order ? 1 : -1);
   }
 }
 
@@ -217,6 +222,7 @@ function addPrompt() {
   const newPrompt: Prompt = {
     name: `p${count}`,
     desc: `新建提示词 p${count} 的描述`,
+    order: count * 5,
     content: '',
   };
   indexData.prompts.push(newPrompt);
