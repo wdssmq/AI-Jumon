@@ -60,6 +60,7 @@ function close() {
 function save() {
   if (hasError.value)
     return;
+  editingIndex.value = null;
   // 过滤掉完全空行（name 与 content 都为空）
   const cleaned = trimmedItems.value.filter(it => it.name || it.content);
   emit('save', cleaned);
@@ -113,20 +114,20 @@ function save() {
         >
           <!-- 名称 -->
           <div class="w-1/6 flex flex-col">
-            <label class="text-sm text-gray-700">名称</label>
+            <label class="mt-1 text-sm text-gray-700">名称</label>
             <input
               v-model="it.name"
-              class="mt-1 border rounded p-2"
+              class="input-def p-2"
               :class="{ 'border-red-500': duplicateNames.has(it.name.trim()) }"
               placeholder="变量名"
             >
           </div>
           <!-- 值 -->
           <div class="w-4/6 flex flex-col">
-            <label class="text-sm text-gray-700">内容</label>
+            <label class="mt-1 text-sm text-gray-700">内容</label>
             <textarea
               v-model="it.content"
-              class="mt-1 resize-y border rounded p-2 font-mono"
+              class="resize-y input-def p-2"
               rows="3"
               placeholder="变量内容"
               @focus="editingIndex = idx"
