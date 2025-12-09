@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Prompt } from '@/jumon/indexParser';
 import { computed, defineComponent, h, onBeforeMount, ref, watch } from 'vue';
-import { getTime } from '@/base/tools.ts';
+import { getTime, timeToDate } from '@/base/tools.ts';
 
 const props = defineProps({
   prompt: Object,
@@ -195,9 +195,12 @@ const AttributeEditor = defineComponent({
       class="w-1/2 rounded bg-white p-6 shadow-lg"
       @click.stop
     >
-      <h2 class="mb-4 text-lg font-bold">
-        编辑提示词
-      </h2>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-lg font-bold">
+          编辑提示词
+        </h2>
+        <span class="text-sm text-gray-500">{{ timeToDate(prompt.update as number) }}</span>
+      </div>
 
       <AttributeEditor
         label="名称"
