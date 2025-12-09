@@ -5,6 +5,7 @@ import type {
   Prompt,
 } from '@/jumon/indexParser';
 import {
+  NAffix,
   NCollapse,
   NCollapseItem,
   NDrawer,
@@ -417,66 +418,73 @@ const drawerTitle = ref('变量列表');
         </option>
       </select>
     </div>
-    <!-- 控制条 -->
-    <div class="btn-bar ml-2 flex items-center gap-2 py-2">
-      <template v-if="!toDeletePrompt">
-        <button
-          class="btn-def bg-red-500 hover:bg-red-600"
-          @click="toDeletePrompt = true"
-        >
-          删除提示词
-        </button>
-      </template>
-      <template v-else>
-        <select
-          id="deletePrompt"
-          name="deletePrompt"
-          class="input-def"
-          @change="promptNameToDelete = ($event.target as HTMLSelectElement).value"
-        >
-          <option value="">
-            请选择要删除的提示词
-          </option>
-          <option
-            v-for="(prompt, index) in curIndex.prompts"
-            :key="index"
-            :value="prompt.name"
+    <NAffix
+      :top="3"
+      :trigger-top="7"
+      class="left-73px right-37px bg-white shadow-md"
+      listen-to=".for-naffix"
+    >
+      <!-- 控制条 -->
+      <div class="btn-bar ml-2 flex items-center gap-2 py-2">
+        <template v-if="!toDeletePrompt">
+          <button
+            class="btn-def bg-red-500 hover:bg-red-600"
+            @click="toDeletePrompt = true"
           >
-            {{ prompt.name }}
-          </option>
-        </select>
+            删除提示词
+          </button>
+        </template>
+        <template v-else>
+          <select
+            id="deletePrompt"
+            name="deletePrompt"
+            class="input-def"
+            @change="promptNameToDelete = ($event.target as HTMLSelectElement).value"
+          >
+            <option value="">
+              请选择要删除的提示词
+            </option>
+            <option
+              v-for="(prompt, index) in curIndex.prompts"
+              :key="index"
+              :value="prompt.name"
+            >
+              {{ prompt.name }}
+            </option>
+          </select>
+          <button
+            class="btn-def bg-red-500 hover:bg-red-600"
+            @click="deletePrompt(promptNameToDelete)"
+          >
+            确认
+          </button>
+          <button
+            class="btn-def bg-gray-500 hover:bg-gray-600"
+            @click="toDeletePrompt = false"
+          >
+            取消
+          </button>
+        </template>
         <button
-          class="btn-def bg-red-500 hover:bg-red-600"
-          @click="deletePrompt(promptNameToDelete)"
+          class="btn-def bg-blue-500 hover:bg-blue-600"
+          @click="addPrompt()"
         >
-          确认
+          添加提示词
         </button>
         <button
-          class="btn-def bg-gray-500 hover:bg-gray-600"
-          @click="toDeletePrompt = false"
+          class="btn-def bg-purple-500 hover:bg-purple-600"
+          @click="generatePrompt(true)"
         >
-          取消
+          切换排序 | {{ sortType[sortTypeIndex] }}
         </button>
-      </template>
-      <button
-        class="btn-def bg-blue-500 hover:bg-blue-600"
-        @click="addPrompt()"
-      >
-        添加提示词
-      </button>
-      <button
-        class="btn-def bg-purple-500 hover:bg-purple-600"
-        @click="generatePrompt(true)"
-      >
-        切换排序 | {{ sortType[sortTypeIndex] }}
-      </button>
-      <button
-        class="ml-auto mr-4 btn-def bg-indigo-500 hover:bg-indigo-600"
-        @click="drawerActive = true"
-      >
-        全局变量
-      </button>
-    </div>
+        <button
+          class="ml-auto mr-4 btn-def bg-indigo-500 hover:bg-indigo-600"
+          @click="drawerActive = true"
+        >
+          全局变量
+        </button>
+      </div>
+    </NAffix>
     <!-- 提示词列表 -->
     <NGrid
       v-if="curIndex && curIndex.prompts"

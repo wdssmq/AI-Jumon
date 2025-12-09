@@ -72,7 +72,7 @@ function handleMenuSelect(key: string) {
     </NLayoutSider>
 
     <!-- 主内容区域 -->
-    <NLayoutContent content-style="height: calc(100vh - 24px);" content-class="overflow-y-auto p-3">
+    <NLayoutContent content-style="height: calc(100vh - 24px);" content-class="overflow-y-auto p-3 for-naffix">
       <JumonPage v-if="currentView === 'jumon'" />
       <ConfigPage v-else-if="currentView === 'config'" />
     </NLayoutContent>
