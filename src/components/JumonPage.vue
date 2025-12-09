@@ -81,16 +81,19 @@ function preProcessResult(result: Config[] | Config) {
 }
 
 // 排序修改
-const sortType = ref<'order' | 'rnd'>('order');
-function changeSort(to = '') {
-  if (sortType.value === 'rnd' || to === 'order') {
-    sortType.value = 'order';
+const sortType = ['order', 'rnd', 'update'];
+const sortTypeIndex = ref(0);
+function changeSort() {
+  sortTypeIndex.value = (sortTypeIndex.value + 1) % sortType.length;
+  console.log('Change Sort to:', sortType[sortTypeIndex.value]);
+  if (sortType[sortTypeIndex.value] === 'update') {
+    curIndex.value.prompts.sort((a, b) => {
+      const timeA = a.update as number || 0;
+      const timeB = b.update as number || 0;
+      return timeB - timeA;
+    });
   }
-  else {
-    sortType.value = 'rnd';
-  }
-
-  if (sortType.value === 'rnd') {
+  else if (sortType[sortTypeIndex.value] === 'rnd') {
     curIndex.value.prompts.sort(() => Math.random() - 0.5);
   }
   else {
@@ -465,7 +468,7 @@ const drawerTitle = ref('变量列表');
         class="btn-def bg-purple-500 hover:bg-purple-600"
         @click="generatePrompt(true)"
       >
-        切换排序
+        切换排序 | {{ sortType[sortTypeIndex] }}
       </button>
       <button
         class="ml-auto mr-4 btn-def bg-indigo-500 hover:bg-indigo-600"

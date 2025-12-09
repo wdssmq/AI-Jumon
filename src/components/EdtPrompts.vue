@@ -220,7 +220,7 @@ const AttributeEditor = defineComponent({
 
       <AttributeEditor
         label="排序"
-        :on-update="(val: string) => prompt.order = Number(val)"
+        :on-update="(val: string) => prompt.order = Number(val.replace(/\D/g, ''))"
         :on-toggle="() => attributesEditState.order = !attributesEditState.order"
         :model-value="prompt.order.toString()"
         :is-editing="attributesEditState.order"
