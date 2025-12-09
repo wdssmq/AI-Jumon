@@ -82,7 +82,7 @@ function preProcessResult(result: Config[] | Config) {
 }
 
 // 排序修改
-const sortType = ['order', 'rnd', 'update'];
+const sortType = ['order', 'rnd', 'update', 'name'];
 const sortTypeIndex = ref(0);
 function changeSort() {
   sortTypeIndex.value = (sortTypeIndex.value + 1) % sortType.length;
@@ -96,6 +96,9 @@ function changeSort() {
   }
   else if (sortType[sortTypeIndex.value] === 'rnd') {
     curIndex.value.prompts.sort(() => Math.random() - 0.5);
+  }
+  else if (sortType[sortTypeIndex.value] === 'name') {
+    curIndex.value.prompts.sort((a, b) => a.name.localeCompare(b.name));
   }
   else {
     curIndex.value.prompts.sort((a, b) => a.order > b.order ? 1 : -1);
