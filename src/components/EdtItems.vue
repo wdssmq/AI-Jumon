@@ -7,6 +7,8 @@ const emit = defineEmits(['close', 'save']);
 
 // 深拷贝到本地可编辑副本
 const localItems = ref<Item[]>(JSON.parse(JSON.stringify(props.items || [])));
+// 正在编辑的行索引
+const editingIndex = ref<number | null>(null);
 
 watch(
   () => props.items,
@@ -127,6 +129,7 @@ function save() {
               class="mt-1 resize-y border rounded p-2 font-mono"
               rows="3"
               placeholder="变量内容"
+              @focus="editingIndex = idx"
             />
           </div>
           <div class="flex flex-col">
@@ -138,7 +141,7 @@ function save() {
               删除
             </button>
             <button
-              v-else class="mt-6 btn-def bg-blue-500 hover:bg-blue-600"
+              v-else-if="editingIndex === idx" class="mt-6 btn-def bg-blue-500 hover:bg-blue-600"
               :disabled="hasError"
               @click="save"
             >

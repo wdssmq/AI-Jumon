@@ -468,7 +468,7 @@ const drawerTitle = ref('变量列表');
         切换排序
       </button>
       <button
-        class="btn-def bg-green-500 hover:bg-green-600"
+        class="ml-auto mr-4 btn-def bg-indigo-500 hover:bg-indigo-600"
         @click="drawerActive = true"
       >
         全局变量
@@ -542,14 +542,6 @@ const drawerTitle = ref('变量列表');
     resizable
   >
     <NDrawerContent :title="drawerTitle">
-      <NLayout class="mb-4">
-        <button
-          class="btn-def bg-purple-500 hover:bg-purple-600"
-          @click="showItemsEditor = true, drawerActive = false"
-        >
-          编辑变量
-        </button>
-      </NLayout>
       <NCollapse
         :trigger-areas="['arrow', 'extra']"
         :default-expanded-names="curIndex.items.map((_, index) => index)"
@@ -563,7 +555,15 @@ const drawerTitle = ref('变量列表');
           <template #header-extra>
             展开
           </template>
-          <span class="text-gray-700">{{ item.content }}</span>
+          <div class="flex justify-between">
+            <span class="text-gray-700">{{ item.content }}</span>
+            <button
+              class="btn-small bg-purple-500 hover:bg-purple-600"
+              @click="showItemsEditor = true, drawerActive = false"
+            >
+              编辑变量
+            </button>
+          </div>
         </NCollapseItem>
       </NCollapse>
     </NDrawerContent>
